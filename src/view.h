@@ -7,10 +7,13 @@
 using sf::Vector2i;
 
 class View {
+ protected:
+  App *app;
+  Vector2i windowSize;
  public:
   virtual ~View();
 
-  virtual void setup(App *app, sf::Vector2i windowSize) = 0;
+  virtual void setup(App *_app, Vector2i _windowSize);
 
   virtual void update() = 0;
 

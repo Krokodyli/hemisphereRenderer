@@ -23,4 +23,5 @@ class DrawManager {
   void setOffset(Vector2f newOffset);
 
   void drawRectangle(Vector2f position, Vector2f size, Color fillColor);
+  void drawLine(Vector2f v1, Vector2f v2, Color color);
 };
