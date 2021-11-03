@@ -7,27 +7,39 @@ MeshEdge::MeshEdge(Vector3f *_a, Vector3f *_b) : a(_a), b(_b) { }
 MeshTriangle::MeshTriangle(Vector3f *_a, Vector3f *_b, Vector3f *_c)
     : a(_a), b(_b), c(_c) { }
 
-Mesh::Mesh(Vector3f _center, float _radius, int _precision)
-  : center(_center), radius(_radius), precision(_precision) {
+Mesh::Mesh(Vector3f _center, float _radius, int _parallelCount,
+           int _meridianCount)
+  : center(_center), radius(_radius), parallelCount(_parallelCount),
+    meridianCount(_meridianCount) {
   generateMesh();
 }
 
-int Mesh::getPrecision() {
-  return precision;
+int Mesh::getMeridianCount() {
+  return meridianCount;
 }
 
-void Mesh::setPrecision(int _newPrecision) {
-  if(_newPrecision == precision)
-    return;
-  if(_newPrecision < precision) {
-    precision = _newPrecision;
-    generateMesh();
-  }
-  else {
-    for(int i = precision; i < _newPrecision; i++)
-      subdivideMesh();
-    precision = _newPrecision;
-  }
+int Mesh::getParallelCount() {
+  return parallelCount;
+}
+
+void Mesh::setMeridianCount(int newCount) {
+  if(newCount >= 4 && newCount != meridianCount)
+    meridianCount = newCount;
+}
+void Mesh::setParallelCount(int newCount) {
+  if(newCount >= 1 && newCount != parallelCount)
+    parallelCount = newCount;
+}
+
+Vector3f *Mesh::getPoint(int p, int m) {
+  if(p == 0 || m == 0)
+    return points[0];
+  else
+    return points[(p-1) * meridianCount + m];
+}
+
+const vector<Vector3f *> &Mesh::getPoints() {
+  return points;
 }
 
 const vector<MeshTriangle> &Mesh::getTriangles() {
@@ -48,83 +60,61 @@ void Mesh::clearMesh() {
 
 void Mesh::generateMesh() {
   clearMesh();
-  generateInitialMesh();
-  for(int i = 1; i < precision; i++)
-    subdivideMesh();
+  generatePoints();
+  generateEdges();
+  generateTriangles();
 }
 
-void Mesh::generateInitialMesh() {
+void Mesh::generatePoints() {
   addPoint(center.x, center.y, center.z + radius);
-  addPoint(center.x, center.y - radius, center.z);
-  addPoint(center.x + radius, center.y, center.z);
-  addPoint(center.x, center.y + radius, center.z);
-  addPoint(center.x - radius, center.y, center.z);
-
-  for(int i = 1; i <= 4; i++)
-    edges.emplace_back(points[0], points[i]);
-  for(int i = 0; i < 4; i++)
-    edges.emplace_back(points[1 + i], points[1 + (i+1)%4]);
-
-  for(int i = 0; i < 4; i++)
-    triangles.emplace_back(points[1 + i], points[0], points[1+(i+1)%4]);
-}
-
-void Mesh::subdivideMesh() {
-  vector<MeshTriangle> oldTriangles = triangles;
-  triangles.clear();
-  edges.clear();
-
-  for(auto triangle : oldTriangles)
-    subdivideTriangle(triangle);
-
-  generateNewEdges();
-}
-
-void Mesh::subdivideTriangle(MeshTriangle triangle) {
-  auto ap = triangle.a;
-  auto bp = triangle.b;
-  auto cp = triangle.c;
-  addPoint(getMiddlePoint(*ap, *bp));
-  auto abp = points[points.size()-1];
-  addPoint(getMiddlePoint(*bp, *cp));
-  auto bcp = points[points.size() - 1];
-  addPoint(getMiddlePoint(*cp, *ap));
-  auto cap = points[points.size() - 1];
-
-  triangles.emplace_back(ap, abp, cap);
-  triangles.emplace_back(cap, bcp, cp);
-  triangles.emplace_back(cap, abp, bcp);
-  triangles.emplace_back(abp, bp, bcp);
-}
-
-void Mesh::generateNewEdges() {
-  set<pair<Vector3f*, Vector3f*>> newEdges;
-  for(const auto &triangle : triangles) {
-    if(triangle.a >= triangle.b)
-      newEdges.insert({triangle.a, triangle.b});
-    else
-      newEdges.insert({triangle.b, triangle.a});
-
-    if (triangle.b >= triangle.c)
-      newEdges.insert({triangle.b, triangle.c});
-    else
-      newEdges.insert({triangle.c, triangle.b});
-
-    if (triangle.c >= triangle.a)
-      newEdges.insert({triangle.c, triangle.a});
-    else
-      newEdges.insert({triangle.a, triangle.c});
+  for (int i = 1; i <= parallelCount; i++) {
+    float r = (float)i / parallelCount * radius;
+    for (int j = 0; j < meridianCount; j++) {
+      float phi = 2.0f * M_PI * j / (float)meridianCount;
+      float x = r * cos(phi);
+      float y = r * sin(phi);
+      float z = sqrt(radius * radius - x * x - y * y);
+      addPoint(center.x + x, center.y + y, center.z + z);
+    }
   }
-  for(const auto &edge : newEdges)
-    edges.emplace_back(MeshEdge(edge.first, edge.second));
 }
 
-Vector3f Mesh::getMiddlePoint(Vector3f a, Vector3f b) {
-  Vector3f c = (a+b);
-  c.x /= 2;
-  c.y /= 2;
-  c.z /= 2;
-  return c;
+void Mesh::generateEdges() {
+  Vector3f *center = getPoint(0, 0);
+  for(int m = 1; m <= meridianCount; m++)
+    edges.emplace_back(center, getPoint(1, m));
+
+  for(int p = 1; p < parallelCount; p++) {
+    for(int m = 1; m <= meridianCount; m++) {
+      int nextMeridian = 1 + m % meridianCount;
+      edges.emplace_back(getPoint(p, m), getPoint(p+1, m));
+      edges.emplace_back(getPoint(p, m), getPoint(p, nextMeridian));
+      edges.emplace_back(getPoint(p, m), getPoint(p+1, nextMeridian));
+    }
+  }
+  for(int m = 1; m <= meridianCount; m++) {
+    int nextMeridian = 1 + m % meridianCount;
+    edges.emplace_back(getPoint(parallelCount, m),
+                       getPoint(parallelCount, nextMeridian));
+  }
+}
+
+void Mesh::generateTriangles() {
+  Vector3f *center = getPoint(0, 0);
+  for(int m = 1; m <= meridianCount; m++) {
+    int nextMerdian = 1 + m % meridianCount;
+    triangles.emplace_back(getPoint(1, m), center, getPoint(1, nextMerdian));
+  }
+
+  for(int p = 1; p < parallelCount; p++) {
+    for(int m = 1; m <= meridianCount; m++) {
+      int nextMeridian = 1 + m % meridianCount;
+      triangles.emplace_back(getPoint(p, m), getPoint(p, nextMeridian),
+                             getPoint(p + 1, m));
+      triangles.emplace_back(getPoint(p, m), getPoint(p + 1, nextMeridian),
+                             getPoint(p, m));
+    }
+  }
 }
 
 void Mesh::addPoint(float x, float y, float z) {
