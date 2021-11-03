@@ -3,6 +3,7 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/System/Vector3.hpp>
+#include "resourceManager.h"
 
 using sf::Color;
 using sf::Vector2f;
@@ -13,8 +14,10 @@ class DrawManager {
   Vector2f offset;
   sf::RenderWindow *window;
 
+  ResourceManager resourceManager;
+
  public:
-  DrawManager(sf::RenderWindow *_window);
+  DrawManager(sf::RenderWindow *_window, std::string _execPath);
 
   Vector2f getOffset();
   void setOffset(Vector2f newOffset);

@@ -2,8 +2,8 @@
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 
-DrawManager::DrawManager(sf::RenderWindow *_window)
-  : window(_window) {}
+DrawManager::DrawManager(sf::RenderWindow *_window, std::string _execPath)
+  : window(_window), resourceManager(_execPath) { }
 
 Vector2f DrawManager::getOffset() {
   return offset;
