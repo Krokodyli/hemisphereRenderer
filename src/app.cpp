@@ -8,10 +8,15 @@
 #include <SFML/Window/WindowStyle.hpp>
 
 App::App(std::string _title, sf::Vector2i _size)
-  : title(_title), size(_size), window(nullptr) { }
+  : title(_title), size(_size), window(nullptr), drawManager(nullptr) { }
 
 App::~App() {
-  delete window;
+  if(window)
+    delete window;
+  if(drawManager)
+    delete drawManager;
+  if(toolbar)
+    delete toolbar;
 }
 
 void App::execute() {
@@ -27,14 +32,13 @@ void App::execute() {
 void App::setup() {
   window = new sf::RenderWindow(sf::VideoMode(size.x, size.y, 32), title,
                                 sf::Style::Titlebar | sf::Style::Close);
+  drawManager = new DrawManager(window);
+  toolbar = new Toolbar(sf::Vector2f(0, 0), sf::Vector2f(size.x/6.0f, size.y),
+                        sf::Color::White);
 }
 
 void App::draw() {
-  window->clear(sf::Color::Black);
-  sf::RectangleShape shape(sf::Vector2f(100, 200));
-  shape.setFillColor(sf::Color::Red);
-  shape.setPosition(sf::Vector2f(100, 100));
-  window->draw(shape);
+  toolbar->draw(drawManager);
   window->display();
 }
 
