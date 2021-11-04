@@ -21,7 +21,9 @@ void MainView::setup(App *_app, Vector2i _windowSize) {
   isRunningFlag = true;
 }
 
-void MainView::update() { }
+void MainView::update(Controller *controller) {
+  controller->update();
+}
 
 void MainView::draw(DrawManager *drawManager) {
   toolbar->draw(drawManager);

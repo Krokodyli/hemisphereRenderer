@@ -5,6 +5,7 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/System/Vector2.hpp>
 #include "drawManager.h"
+#include "controller.h"
 
 using std::stack;
 
@@ -20,6 +21,8 @@ class App {
 
   sf::RenderWindow *window;
   DrawManager *drawManager;
+  Controller *controller;
+
 
   stack<View *> views;
   bool isAppRunning;

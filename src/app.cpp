@@ -14,7 +14,8 @@ const int App::framerateLimit = 60;
 
 App::App(std::string _title, sf::Vector2i _windowSize, std::string _execPath)
   : title(_title), windowSize(_windowSize), execPath(_execPath),
-    window(nullptr), drawManager(nullptr), isAppRunning(false) { }
+    window(nullptr), drawManager(nullptr), controller(nullptr),
+    isAppRunning(false) { }
 
 App::~App() {
   while(!views.empty()) {
@@ -22,6 +23,8 @@ App::~App() {
     views.pop();
     delete view;
   }
+  delete drawManager;
+  delete controller;
 }
 
 void App::pushView(View *newView) {
@@ -32,7 +35,6 @@ void App::pushView(View *newView) {
 
 void App::execute() {
   setup();
-  window->setFramerateLimit(framerateLimit);
   pushView(new MainView());
 }
 
@@ -40,8 +42,10 @@ void App::setup() {
   window = new sf::RenderWindow(sf::VideoMode(windowSize.x, windowSize.y, 32),
                                 title,
                                 sf::Style::Titlebar | sf::Style::Close);
+  window->setFramerateLimit(framerateLimit);
 
   drawManager = new DrawManager(window, execPath);
+  controller = new Controller(window);
 
   isAppRunning = true;
 }
@@ -60,7 +64,8 @@ void App::executeView(View *view) {
   currView->setup(this, windowSize);
   while(isAppRunning && currView->isRunning()) {
     handleEvents();
-    currView->update();
+    controller->update();
+    currView->update(controller);
     currView->draw(drawManager);
     window->display();
   }

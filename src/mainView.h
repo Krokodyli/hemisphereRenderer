@@ -21,7 +21,7 @@ public:
   virtual ~MainView();
 
   virtual void setup(App *app, Vector2i _windowSize);
-  virtual void update();
+  virtual void update(Controller *controller);
   virtual void draw(DrawManager *drawManager);
   virtual bool isRunning();
   virtual void destroy();
