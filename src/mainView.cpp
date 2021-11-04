@@ -2,6 +2,8 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/System/Vector3.hpp>
 
+MainView::MainView() : isRunningFlag(false), toolbar(nullptr), mesh(nullptr) { }
+
 MainView::~MainView() {
   destroy();
 }
@@ -16,6 +18,7 @@ void MainView::setup(App *_app, Vector2i _windowSize) {
   float meshY = 0.5f * windowSize.y;
   float meshRadius = 0.48f * windowSize.y;
   mesh = new Mesh(sf::Vector3f(meshX, meshY, 0.0f), meshRadius, 3, 16);
+  isRunningFlag = true;
 }
 
 void MainView::update() { }
@@ -23,6 +26,10 @@ void MainView::update() { }
 void MainView::draw(DrawManager *drawManager) {
   toolbar->draw(drawManager);
   drawMesh(drawManager);
+}
+
+bool MainView::isRunning() {
+  return isRunningFlag;
 }
 
 void MainView::destroy() {

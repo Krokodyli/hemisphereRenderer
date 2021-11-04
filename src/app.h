@@ -15,26 +15,23 @@ class App {
   static const int framerateLimit;
 
   std::string title;
-  sf::Vector2i size;
+  sf::Vector2i windowSize;
   std::string execPath;
 
   sf::RenderWindow *window;
   DrawManager *drawManager;
 
   stack<View *> views;
-
-  bool isRunning;
+  bool isAppRunning;
 
   void setup();
-  void draw();
-  void update();
   void handleEvents();
+  void executeView(View *view);
  public:
-  App(std::string title, sf::Vector2i _size, std::string _execPath);
+  App(std::string title, sf::Vector2i _windowSize, std::string _execPath);
   ~App();
 
   void pushView(View *newView);
-  void popView();
 
   void execute();
 };

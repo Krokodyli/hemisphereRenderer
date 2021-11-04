@@ -12,57 +12,56 @@
 
 const int App::framerateLimit = 60;
 
-App::App(std::string _title, sf::Vector2i _size, std::string _execPath)
-  : title(_title), size(_size), execPath(_execPath),
-    window(nullptr), drawManager(nullptr) { }
+App::App(std::string _title, sf::Vector2i _windowSize, std::string _execPath)
+  : title(_title), windowSize(_windowSize), execPath(_execPath),
+    window(nullptr), drawManager(nullptr), isAppRunning(false) { }
 
 App::~App() {
-  while(!views.empty())
-    popView();
+  while(!views.empty()) {
+    View *view = views.top();
+    views.pop();
+    delete view;
+  }
 }
 
 void App::pushView(View *newView) {
-  newView->setup(this, size);
+  newView->setup(this, windowSize);
   views.push(newView);
-}
-
-void App::popView() {
-  if(!views.empty())
-    views.pop();
+  executeView(views.top());
 }
 
 void App::execute() {
   setup();
-  isRunning = true;
   window->setFramerateLimit(framerateLimit);
-  while(isRunning) {
-    handleEvents();
-    update();
-    draw();
-  }
-}
-
-void App::setup() {
-  window = new sf::RenderWindow(sf::VideoMode(size.x, size.y, 32), title,
-                                sf::Style::Titlebar | sf::Style::Close);
-  drawManager = new DrawManager(window, execPath);
   pushView(new MainView());
 }
 
-void App::draw() {
-  if(!views.empty())
-    views.top()->draw(drawManager);
-  window->display();
-}
+void App::setup() {
+  window = new sf::RenderWindow(sf::VideoMode(windowSize.x, windowSize.y, 32),
+                                title,
+                                sf::Style::Titlebar | sf::Style::Close);
 
-void App::update() {
-  if (!views.empty())
-    views.top()->update();
+  drawManager = new DrawManager(window, execPath);
+
+  isAppRunning = true;
 }
 
 void App::handleEvents() {
   sf::Event event;
   while(window->pollEvent(event))
     if(event.type == sf::Event::Closed)
-      isRunning = false;
+      isAppRunning = false;
+}
+
+void App::executeView(View *view) {
+  if(views.empty())
+    return;
+  View *currView = views.top();
+  currView->setup(this, windowSize);
+  while(isAppRunning && currView->isRunning()) {
+    handleEvents();
+    currView->update();
+    currView->draw(drawManager);
+    window->display();
+  }
 }
