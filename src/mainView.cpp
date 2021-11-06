@@ -20,7 +20,7 @@ void MainView::setup(App *_app, Point<int> _windowSize) {
 }
 
 void MainView::update(Controller *controller) {
-  controller->update();
+  toolbar->update(controller);
 }
 
 void MainView::draw(DrawManager *drawManager) {
