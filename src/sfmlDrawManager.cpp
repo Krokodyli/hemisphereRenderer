@@ -5,7 +5,9 @@
 
 SFMLDrawManager::SFMLDrawManager(sf::RenderWindow *window,
                                  std::string execPath)
-  : window(window), resourceManager(execPath) { }
+  : window(window), resourceManager(execPath) {
+  resourceManager.loadResources();
+}
 
 SFMLDrawManager::~SFMLDrawManager() { }
 
@@ -24,6 +26,14 @@ void SFMLDrawManager::drawLine(Point<float> v1, Point<float> v2, Color color) {
     sf::Vertex(sf::Vector2f(v2.x, v2.y), colorToSFMLColor(color))
   };
   window->draw(line, 2, sf::Lines);
+}
+
+void SFMLDrawManager::drawText(Point<float> pos, std::string text, int fontSize,
+                               Color color) {
+  auto font = resourceManager.getFont();
+  sf::Text drawableText(text, font, fontSize);
+  drawableText.setPosition(sf::Vector2f(pos.x-offset.x, pos.y-offset.y));
+  window->draw(drawableText);
 }
 
 sf::Color SFMLDrawManager::colorToSFMLColor(Color c) {

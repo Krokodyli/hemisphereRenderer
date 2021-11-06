@@ -1,5 +1,6 @@
 #pragma once
 
+#include <SFML/Graphics.hpp>
 #include <string>
 #include <filesystem>
 
@@ -14,8 +15,15 @@ class ResourceManager {
 
   string resourcesPath;
 
+  sf::Font font;
+
   void generateResourcesPath();
 
- public:
+  void loadFont();
+
+public:
   ResourceManager(std::string _execPath);
+
+  void loadResources();
+  const sf::Font &getFont();
 };

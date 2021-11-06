@@ -19,4 +19,6 @@ class DrawManager {
                              Color color) = 0;
   virtual void drawLine(Point<float> v1, Point<float> v2,
                         Color color) = 0;
+  virtual void drawText(Point<float> pos, std::string text, int fontSize,
+                        Color color) = 0;
 };

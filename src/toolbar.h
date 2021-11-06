@@ -5,6 +5,7 @@
 #include "drawManager.h"
 #include "controller.h"
 #include "slider.h"
+#include "button.h"
 
 class Toolbar {
  private:
@@ -14,6 +15,7 @@ class Toolbar {
   Color backgroundColor;
 
   Slider testSlider;
+  Button testButton;
 
  public:
   Toolbar(Point<float> position, Point<float> size);
