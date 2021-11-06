@@ -1,43 +1,25 @@
 #pragma once
 
-#include <SFML/System/Vector2.hpp>
-#include <chrono>
-#include <SFML/Window.hpp>
-
-using sf::Vector2f;
-using sf::Window;
+#include "point.h"
 
 class Controller {
-private:
-  Window *window;
-  Vector2f offset;
-
-  bool _isLeftPressed, _wasLeftPressed;
-  bool _isRightPressed, _wasRightPressed;
-  Vector2f mousePos, oldMousePos;
-
-  int prevLeftClickTime, leftClickTime;
-
-  int getMilisecondsFromEpoch();
-
 public:
-  Controller(Window *_window);
   virtual ~Controller();
 
-  virtual void update();
+  virtual void update() = 0;
 
-  virtual bool isLeftPressed();
-  virtual bool isRightPressed();
-  virtual bool wasLeftPressed();
-  virtual bool wasRightPressed();
-  virtual bool isLeftClicked();
-  virtual bool isRightClicked();
+  virtual bool isLeftPressed() = 0;
+  virtual bool isRightPressed() = 0;
+  virtual bool wasLeftPressed() = 0;
+  virtual bool wasRightPressed() = 0;
+  virtual bool isLeftClicked() = 0;
+  virtual bool isRightClicked() = 0;
 
-  virtual bool wasLeftClickDouble(int gapInMiliseconds);
+  virtual bool wasLeftClickDouble(int doubleClickThreshold) = 0;
 
-  virtual Vector2f getMousePos();
-  virtual Vector2f getPrevMousePos();
+  virtual Point<float> getMousePos() = 0;
+  virtual Point<float> getPrevMousePos() = 0;
 
-  virtual Vector2f getOffset();
-  virtual void setOffset(Vector2f _offset);
+  virtual Point<float> getOffset() = 0;
+  virtual void setOffset(Point<float> _offset) = 0;
 };

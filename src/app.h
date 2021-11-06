@@ -1,40 +1,33 @@
 #pragma once
 
+#include <string>
 #include <stack>
 
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/System/Vector2.hpp>
+#include "point.h"
 #include "drawManager.h"
 #include "controller.h"
-
-using std::stack;
 
 class View;
 
 class App {
- private:
-  static const int framerateLimit;
-
+ protected:
   std::string title;
-  sf::Vector2i windowSize;
-  std::string execPath;
+  Point<int> windowSize;
 
-  sf::RenderWindow *window;
   DrawManager *drawManager;
   Controller *controller;
 
-
-  stack<View *> views;
+  std::stack<View*> views;
   bool isAppRunning;
 
-  void setup();
-  void handleEvents();
-  void executeView(View *view);
+  virtual void setup() = 0;
+  virtual void handleEvents() = 0;
+  virtual void executeView(View *view) = 0;
  public:
-  App(std::string title, sf::Vector2i _windowSize, std::string _execPath);
-  ~App();
+  App(std::string title, Point<int> windowSize);
+  virtual ~App();
 
-  void pushView(View *newView);
+  virtual void pushView(View *newView);
 
-  void execute();
+  virtual void execute();
 };

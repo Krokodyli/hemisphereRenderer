@@ -5,32 +5,31 @@
 #include <vector>
 #include <iostream>
 
-#include <SFML/System/Vector3.hpp>
+#include "Point3D.h"
 
 using std::vector;
 using std::set;
 using std::pair;
-using sf::Vector3f;
 
 struct MeshEdge {
-  Vector3f *a, *b;
+  Point3D<float> *a, *b;
 
-  MeshEdge(Vector3f *_a, Vector3f *_b);
+  MeshEdge(Point3D<float> *_a, Point3D<float> *_b);
 };
 
 struct MeshTriangle {
-  Vector3f *a, *b, *c;
+  Point3D<float> *a, *b, *c;
 
-  MeshTriangle(Vector3f *_a, Vector3f *_b, Vector3f *_c);
+  MeshTriangle(Point3D<float> *_a, Point3D<float> *_b, Point3D<float> *_c);
 };
 
 class Mesh {
  private:
-  Vector3f center;
+  Point3D<float> center;
   float radius;
   int parallelCount, meridianCount;
 
-  vector<Vector3f*> points;
+  vector<Point3D<float>*> points;
 
   vector<MeshEdge> edges;
   vector<MeshTriangle> triangles;
@@ -42,17 +41,18 @@ class Mesh {
   void generateTriangles();
 
   void addPoint(float x, float y, float z);
-  void addPoint(sf::Vector3f v);
+  void addPoint(Point3D<float> v);
  public:
-  Mesh(Vector3f _center, float _radius, int _parallelCount, int _meridianCount);
+  Mesh(Point3D<float> _center, float _radius, int _parallelCount,
+       int _meridianCount);
 
   int getMeridianCount();
   int getParallelCount();
   void setMeridianCount(int newCount);
   void setParallelCount(int newCount);
 
-  Vector3f *getPoint(int p, int m);
-  const vector<Vector3f*> &getPoints();
+  Point3D<float> *getPoint(int p, int m);
+  const vector<Point3D<float>*> &getPoints();
   const vector<MeshTriangle> &getTriangles();
   const vector<MeshEdge> &getEdges();
 };

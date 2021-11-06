@@ -1,27 +1,22 @@
 #pragma once
 
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/System/Vector2.hpp>
-#include <SFML/System/Vector3.hpp>
 #include "resourceManager.h"
-
-using sf::Color;
-using sf::Vector2f;
-using sf::Vector2i;
+#include "point.h"
+#include "color.h"
 
 class DrawManager {
- private:
-  Vector2f offset;
-  sf::RenderWindow *window;
-
-  ResourceManager resourceManager;
+ protected:
+  Point<float> offset;
 
  public:
-  DrawManager(sf::RenderWindow *_window, std::string _execPath);
+  DrawManager();
+  virtual ~DrawManager();
 
-  Vector2f getOffset();
-  void setOffset(Vector2f newOffset);
+  Point<float> getOffset();
+  void setOffset(Point<float> newOffset);
 
-  void drawRectangle(Vector2f position, Vector2f size, Color fillColor);
-  void drawLine(Vector2f v1, Vector2f v2, Color color);
+  virtual void drawRectangle(Point<float> position, Point<float> size,
+                             Color color) = 0;
+  virtual void drawLine(Point<float> v1, Point<float> v2,
+                        Color color) = 0;
 };

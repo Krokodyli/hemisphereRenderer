@@ -3,10 +3,7 @@
 #include "view.h"
 #include "mesh.h"
 #include "toolbar.h"
-#include <SFML/System/Vector2.hpp>
-
-using sf::Vector2i;
-using sf::Color;
+#include "color.h"
 
 class MainView : public View {
  private:
@@ -20,7 +17,7 @@ public:
   MainView();
   virtual ~MainView();
 
-  virtual void setup(App *app, Vector2i _windowSize);
+  virtual void setup(App *app, Point<int> _windowSize);
   virtual void update(Controller *controller);
   virtual void draw(DrawManager *drawManager);
   virtual bool isRunning();

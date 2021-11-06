@@ -2,11 +2,11 @@
 #include <iostream>
 #include <vector>
 
-#include "app.h"
+#include "sfmlApp.h"
 
 int main(int argc, char **argv) {
-  App app("Triangular mesh hole filling", sf::Vector2i(1200, 900),
-          std::string(argv[0]));
-  app.execute();
+  auto app = new SFMLApp("Triangular mesh hole filling", Point<int>(1200, 900),
+                         std::string(argv[0]));
+  app->execute();
   return 0;
 }

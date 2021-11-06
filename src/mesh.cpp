@@ -2,12 +2,13 @@
 #include <SFML/System/Vector3.hpp>
 #include <cmath>
 
-MeshEdge::MeshEdge(Vector3f *_a, Vector3f *_b) : a(_a), b(_b) { }
+MeshEdge::MeshEdge(Point3D<float> *_a, Point3D<float> *_b) : a(_a), b(_b) { }
 
-MeshTriangle::MeshTriangle(Vector3f *_a, Vector3f *_b, Vector3f *_c)
+MeshTriangle::MeshTriangle(Point3D<float> *_a, Point3D<float> *_b,
+                           Point3D<float> *_c)
     : a(_a), b(_b), c(_c) { }
 
-Mesh::Mesh(Vector3f _center, float _radius, int _parallelCount,
+Mesh::Mesh(Point3D<float> _center, float _radius, int _parallelCount,
            int _meridianCount)
   : center(_center), radius(_radius), parallelCount(_parallelCount),
     meridianCount(_meridianCount) {
@@ -31,14 +32,14 @@ void Mesh::setParallelCount(int newCount) {
     parallelCount = newCount;
 }
 
-Vector3f *Mesh::getPoint(int p, int m) {
+Point3D<float> *Mesh::getPoint(int p, int m) {
   if(p == 0 || m == 0)
     return points[0];
   else
     return points[(p-1) * meridianCount + m];
 }
 
-const vector<Vector3f *> &Mesh::getPoints() {
+const vector<Point3D<float> *> &Mesh::getPoints() {
   return points;
 }
 
@@ -80,7 +81,7 @@ void Mesh::generatePoints() {
 }
 
 void Mesh::generateEdges() {
-  Vector3f *center = getPoint(0, 0);
+  Point3D<float> *center = getPoint(0, 0);
   for(int m = 1; m <= meridianCount; m++)
     edges.emplace_back(center, getPoint(1, m));
 
@@ -100,7 +101,7 @@ void Mesh::generateEdges() {
 }
 
 void Mesh::generateTriangles() {
-  Vector3f *center = getPoint(0, 0);
+  Point3D<float> *center = getPoint(0, 0);
   for(int m = 1; m <= meridianCount; m++) {
     int nextMerdian = 1 + m % meridianCount;
     triangles.emplace_back(getPoint(1, m), center, getPoint(1, nextMerdian));
@@ -118,9 +119,9 @@ void Mesh::generateTriangles() {
 }
 
 void Mesh::addPoint(float x, float y, float z) {
-  points.push_back(new sf::Vector3f(x, y, z));
+  points.push_back(new Point3D<float>(x, y, z));
 }
 
-void Mesh::addPoint(sf::Vector3f v) {
-  points.push_back(new sf::Vector3f(v));
+void Mesh::addPoint(Point3D<float> v) {
+  points.push_back(new Point3D<float>(v));
 }
