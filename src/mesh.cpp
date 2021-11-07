@@ -36,6 +36,10 @@ void Mesh::setParallelCount(int newCount) {
   }
 }
 
+float Mesh::getRadius() {
+  return radius;
+}
+
 Point3D<float> *Mesh::getPoint(int p, int m) {
   if(p == 0 || m == 0)
     return points[0];
@@ -114,10 +118,10 @@ void Mesh::generateTriangles() {
   for(int p = 1; p < parallelCount; p++) {
     for(int m = 1; m <= meridianCount; m++) {
       int nextMeridian = 1 + m % meridianCount;
-      triangles.emplace_back(getPoint(p, m), getPoint(p, nextMeridian),
-                             getPoint(p + 1, m));
       triangles.emplace_back(getPoint(p, m), getPoint(p + 1, nextMeridian),
-                             getPoint(p, m));
+                             getPoint(p + 1, m));
+      triangles.emplace_back(getPoint(p, m), getPoint(p, nextMeridian),
+                             getPoint(p + 1, nextMeridian));
     }
   }
 }

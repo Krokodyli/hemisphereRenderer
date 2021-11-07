@@ -51,6 +51,8 @@ class Mesh {
   void setMeridianCount(int newCount);
   void setParallelCount(int newCount);
 
+  float getRadius();
+
   Point3D<float> *getPoint(int p, int m);
   const vector<Point3D<float>*> &getPoints();
   const vector<MeshTriangle> &getTriangles();

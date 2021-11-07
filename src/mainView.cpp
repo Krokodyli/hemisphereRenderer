@@ -14,7 +14,7 @@ void MainView::setup(App *_app, Point<int> _windowSize) {
                         Point<float>((float)windowSize.x/6.0,
                                      (float)windowSize.y));
 
-  float meshX = 7.0f / 12 * windowSize.x;
+  float meshX = (windowSize.x - (float)windowSize.x/6) / 2;
   float meshY = 0.5f * windowSize.y;
   float meshRadius = 0.48f * windowSize.y;
   auto mesh = new Mesh(Point3D<float>(meshX, meshY, 0.0f), meshRadius, 3, 16);

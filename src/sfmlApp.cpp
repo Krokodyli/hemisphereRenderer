@@ -38,7 +38,9 @@ void SFMLApp::setup() {
 
   isAppRunning = true;
 
-  views.push(new MainView(new SFMLRenderer()));
+  views.push(new MainView(new SFMLRenderer(Point<int>(windowSize.x/6.0, 0),
+                                           Point<int>(windowSize.x*5.0/6.0,
+                                                      windowSize.y))));
 }
 
 void SFMLApp::handleEvents() {

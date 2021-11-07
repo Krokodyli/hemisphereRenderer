@@ -6,14 +6,14 @@
 
 class DrawManager {
  protected:
-  Point<float> offset;
+  Point<int> offset;
 
  public:
   DrawManager();
   virtual ~DrawManager();
 
-  Point<float> getOffset();
-  void setOffset(Point<float> newOffset);
+  Point<int> getOffset();
+  void setOffset(Point<int> newOffset);
 
   virtual void drawRectangle(Point<float> position, Point<float> size,
                              Color color) = 0;
@@ -21,4 +21,5 @@ class DrawManager {
                         Color color) = 0;
   virtual void drawText(Point<float> pos, std::string text, int fontSize,
                         Color color) = 0;
+  virtual void drawSprite(sf::Sprite *sprite) = 0;
 };

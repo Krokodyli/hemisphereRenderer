@@ -4,10 +4,10 @@ DrawManager::DrawManager() : offset(0, 0) { }
 
 DrawManager::~DrawManager() { }
 
-Point<float> DrawManager::getOffset() {
+Point<int> DrawManager::getOffset() {
   return offset;
 }
 
-void DrawManager::setOffset(Point<float> newOffset) {
+void DrawManager::setOffset(Point<int> newOffset) {
   offset = newOffset;
 }

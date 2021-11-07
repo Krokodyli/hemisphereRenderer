@@ -18,4 +18,5 @@ public:
   virtual void drawLine(Point<float> v1, Point<float> v2, Color color);
   virtual void drawText(Point<float> pos, std::string text,
                         int fontSize, Color color);
+  virtual void drawSprite(sf::Sprite *sprite);
 };
