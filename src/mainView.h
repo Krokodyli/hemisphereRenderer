@@ -4,17 +4,18 @@
 #include "mesh.h"
 #include "toolbar.h"
 #include "color.h"
+#include "renderer.h"
 
 class MainView : public View {
  private:
   bool isRunningFlag;
 
   Toolbar *toolbar;
-  Mesh *mesh;
+  RenderConfig *renderConfig;
+  Renderer *renderer;
 
-  void drawMesh(DrawManager *drawManager);
 public:
-  MainView();
+  MainView(Renderer *renderer);
   virtual ~MainView();
 
   virtual void setup(App *app, Point<int> _windowSize);

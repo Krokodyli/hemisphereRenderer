@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -std=c++17 -Wall -Werror -O2
+CXXFLAGS = -std=c++17 -Wall -Werror -g3
 
 SRC_DIR = src
 BUILD_DIR = build

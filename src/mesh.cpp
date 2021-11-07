@@ -24,12 +24,16 @@ int Mesh::getParallelCount() {
 }
 
 void Mesh::setMeridianCount(int newCount) {
-  if(newCount >= 4 && newCount != meridianCount)
+  if(newCount >= 4 && newCount != meridianCount) {
     meridianCount = newCount;
+    generateMesh();
+  }
 }
 void Mesh::setParallelCount(int newCount) {
-  if(newCount >= 1 && newCount != parallelCount)
+  if(newCount >= 1 && newCount != parallelCount) {
     parallelCount = newCount;
+    generateMesh();
+  }
 }
 
 Point3D<float> *Mesh::getPoint(int p, int m) {

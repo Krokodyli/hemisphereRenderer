@@ -16,5 +16,5 @@ void App::pushView(View *newView) {
 
 void App::execute() {
   setup();
-  pushView(new MainView());
+  executeView(views.top());
 }

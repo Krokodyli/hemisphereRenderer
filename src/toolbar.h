@@ -6,6 +6,7 @@
 #include "controller.h"
 #include "slider.h"
 #include "button.h"
+#include "renderConfig.h"
 
 class Toolbar {
  private:
@@ -14,12 +15,16 @@ class Toolbar {
 
   Color backgroundColor;
 
-  Slider testSlider;
-  Button testButton;
+  Slider *meridianCountSlider;
+  Slider *parallelsCountSlider;
 
- public:
+  void setUp();
+public:
   Toolbar(Point<float> position, Point<float> size);
+  ~Toolbar();
 
   void draw(DrawManager *drawManager);
   void update(Controller *controller);
+
+  void setUpEventHandlers(RenderConfig *renderConfig);
 };

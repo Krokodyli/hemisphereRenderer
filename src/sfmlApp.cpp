@@ -3,6 +3,7 @@
 #include "sfmlController.h"
 #include "view.h"
 #include "mainView.h"
+#include "sfmlRenderer.h"
 
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
@@ -36,6 +37,8 @@ void SFMLApp::setup() {
   controller = new SFMLController(window);
 
   isAppRunning = true;
+
+  views.push(new MainView(new SFMLRenderer()));
 }
 
 void SFMLApp::handleEvents() {
