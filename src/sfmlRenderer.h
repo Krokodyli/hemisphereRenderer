@@ -4,6 +4,9 @@
 #include "renderer.h"
 #include <SFML/Graphics/Image.hpp>
 #include <algorithm>
+#include <thread>
+
+#define RENDERTHREADCOUNT 8
 
 typedef std::vector<pair<Point3D<float>*, Point3D<float>*>> AETVector;
 
@@ -14,6 +17,7 @@ class SFMLRenderer : public Renderer {
   sf::Image image;
   sf::Texture texture;
   sf::Sprite sprite;
+  std::thread threads[RENDERTHREADCOUNT];
 
   void drawMesh(RenderConfig *renderConfig, DrawManager *drawManager);
   void fillTriangles(RenderConfig *renderConfig);
@@ -24,7 +28,7 @@ class SFMLRenderer : public Renderer {
   void findBoundaries(std::vector<Point3D<float> *> &vertices, int *ymin,
                       int *ymax);
   void updateAET(int y, AETVector &aet, vector<Point3D<float> *> &vertices);
-  void calculateScanline(AETVector &aet, float y, vector<int> &points);
+  void calculateScanline(AETVector &aet, float y, vector<int> &scanlinePoints);
   void drawScanline(vector<int> &scanlinePoints, int y, float r);
   void deleteEdgeFromAET(AETVector &aet, Point3D<float> *v1,
                          Point3D<float> *v2);

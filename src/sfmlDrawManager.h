@@ -13,7 +13,7 @@ public:
   SFMLDrawManager(sf::RenderWindow *window, std::string execPath);
   virtual ~SFMLDrawManager();
 
-  virtual void drawRectangle(Point<float> position, Point<float> size,
+  virtual void drawRectangle(Point<float> pos, Point<float> size,
                              Color color);
   virtual void drawLine(Point<float> v1, Point<float> v2, Color color);
   virtual void drawText(Point<float> pos, std::string text,

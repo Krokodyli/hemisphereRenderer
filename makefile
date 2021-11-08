@@ -14,7 +14,7 @@ SOURCES = $(shell find $(SRC_DIR) -name "*.cpp")
 OBJECTS = $(SOURCES:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
 DEPS = $(OBJECTS:.o=.d)
 
-LIBS = -lsfml-graphics -lsfml-window -lsfml-system
+LIBS = -lsfml-graphics -lsfml-window -lsfml-system -pthread
 
 .PHONY: default_target debug directories all clean
 

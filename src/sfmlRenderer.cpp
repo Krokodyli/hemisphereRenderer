@@ -41,7 +41,17 @@ void SFMLRenderer::fillTriangles(RenderConfig *renderConfig) {
   auto triangles = renderConfig->getMesh()->getTriangles();
   for(auto triangle : triangles)
     fillTriangle(renderConfig, triangle);
-  fillTriangle(renderConfig, triangles[triangles.size()/2]);
+  /*
+  for(unsigned int i  = 0; i < triangles.size(); i += RENDERTHREADCOUNT) {
+    int e = std::min((unsigned int)triangles.size(), i + RENDERTHREADCOUNT) - 1;
+    for(int j = i; j <= e; j++) {
+      threads[j - i] = std::thread(&SFMLRenderer::fillTriangle, this,
+                                   renderConfig, triangles[j]);
+    }
+    for (int j = i; j <= e; j++)
+      threads[j - i].join();
+  }
+  */
 }
 
 void SFMLRenderer::fillTriangle(RenderConfig *renderConfig,
@@ -98,19 +108,20 @@ void SFMLRenderer::updateAET(int y, AETVector &aet,
 }
 
 void SFMLRenderer::calculateScanline(AETVector &aet, float y,
-                                     std::vector<int> &points) {
-  points.clear();
+                                     std::vector<int> &scanlinePoints) {
+  scanlinePoints.clear();
 
   for(auto edge : aet) {
     auto v1 = edge.first;
     auto v2 = edge.second;
-    if(v1->y != v2->y) {
+    int dy = std::abs((int)v1->y - (int)v2->y);
+    if(dy >= 1) {
       auto x = (y-v1->y) / (v2->y - v1->y) * (v2->x - v1->x) + v1->x;
-      points.push_back(x);
+      scanlinePoints.push_back(x);
     }
   }
 
-  std::sort(points.begin(), points.end());
+  std::sort(scanlinePoints.begin(), scanlinePoints.end());
 }
 
 void SFMLRenderer::drawScanline(vector<int> &scanlinePoints, int y,
@@ -138,7 +149,7 @@ void SFMLRenderer::deleteEdgeFromAET(AETVector &aet, Point3D<float> *v1,
 }
 
 sf::Color SFMLRenderer::getColorForPixel(Point3D<float> pixel) {
-  return sf::Color(255 * pixel.x/canvasSize.x,
+  return sf::Color(255 * pixel.z/400,
                    255 * pixel.y/canvasSize.y,
                    255 * pixel.x * pixel.y / canvasSize.x / canvasSize.y);
 }

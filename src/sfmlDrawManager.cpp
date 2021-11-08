@@ -12,11 +12,11 @@ SFMLDrawManager::SFMLDrawManager(sf::RenderWindow *window,
 
 SFMLDrawManager::~SFMLDrawManager() { }
 
-void SFMLDrawManager::drawRectangle(Point<float> position, Point<float> size,
+void SFMLDrawManager::drawRectangle(Point<float> pos, Point<float> size,
                                     Color color) {
   sf::RectangleShape rect(sf::Vector2f(size.x, size.y));
-  auto pos = Point<float>(position.x + offset.x, position.y + offset.y);
-  rect.setPosition(sf::Vector2f(pos.x, pos.y));
+  auto offsetPos = Point<float>(pos.x + offset.x, pos.y + offset.y);
+  rect.setPosition(sf::Vector2f(offsetPos.x, offsetPos.y));
   rect.setFillColor(colorToSFMLColor(color));
   window->draw(rect);
 }

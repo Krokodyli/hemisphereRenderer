@@ -15,7 +15,7 @@ class DrawManager {
   Point<int> getOffset();
   void setOffset(Point<int> newOffset);
 
-  virtual void drawRectangle(Point<float> position, Point<float> size,
+  virtual void drawRectangle(Point<float> pos, Point<float> size,
                              Color color) = 0;
   virtual void drawLine(Point<float> v1, Point<float> v2,
                         Color color) = 0;
