@@ -10,12 +10,15 @@ struct Point3D {
   Point3D operator+(const Point3D &r);
   Point3D operator-(const Point3D &r);
   Point3D operator*(const T &r);
+  Point3D operator*(const Point3D &r);
   Point3D operator/(const T &r);
   bool operator==(const Point3D &r);
   bool operator!=(const Point3D &r);
 
   double dis(const Point3D &r);
   T dissq(const Point3D &r);
+
+  float dot(const Point3D &r);
 };
 
 
@@ -35,6 +38,10 @@ Point3D<T> Point3D<T>::operator-(const Point3D &r) {
 template <typename T>
 Point3D<T> Point3D<T>::operator*(const T &r) {
   return Point3D(x * r, y * r, z * r);
+}
+
+template <typename T> Point3D<T> Point3D<T>::operator*(const Point3D<T> &r) {
+  return Point3D(x * r.x, y * r.z, z * r.z);
 }
 
 template <typename T>
@@ -62,3 +69,7 @@ T Point3D<T>::dissq(const Point3D &r) {
   return (x-r.x)*(x-r.x) + (y-r.y)*(y-r.y) + (z-r.z)*(z-r.z);
 }
 
+template <typename T>
+float Point3D<T>::dot(const Point3D<T> &r) {
+  return x*r.x + y * r.y + z * r.z;
+}

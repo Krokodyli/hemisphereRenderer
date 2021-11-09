@@ -19,7 +19,11 @@ void MainView::setup(App *_app, Point<int> _windowSize) {
   float meshRadius = 0.48f * windowSize.y;
   auto mesh = new Mesh(Point3D<float>(meshX, meshY, 0.0f), meshRadius, 3, 16);
 
-  renderConfig = new RenderConfig(mesh);
+
+  auto initialLightPosition = Point3D<float>(meshX * 1.5, meshY,
+                                             meshRadius * 5);
+  renderConfig = new RenderConfig(mesh, initialLightPosition,
+                                  Color(255, 255, 255), 0.5f);
   toolbar->setUpEventHandlers(renderConfig);
 
   isRunningFlag = true;
@@ -27,6 +31,30 @@ void MainView::setup(App *_app, Point<int> _windowSize) {
 
 void MainView::update(Controller *controller) {
   toolbar->update(controller);
+
+  Point3D<float> lp = renderConfig->getLightPosition();
+  float dt = 100;
+  if(goingUp) {
+    lp.y -= dt;
+    if(lp.y < - 200)
+      goingUp = false;
+  }
+  else {
+    lp.y += dt;
+    if (lp.y > windowSize.y + 200)
+      goingUp = true;
+  }
+  if(goingLeft) {
+    lp.x -= dt * 0.5;
+    if(lp.x < -200)
+      goingLeft = false;
+  }
+  else {
+    lp.x += dt * 0.5;
+    if (lp.x > windowSize.x + 200)
+      goingLeft = true;
+  }
+  renderConfig->setLightPosition(lp);
 }
 
 void MainView::draw(DrawManager *drawManager) {
@@ -34,7 +62,7 @@ void MainView::draw(DrawManager *drawManager) {
                              Point<float>(windowSize.x, windowSize.y),
                              Color(0, 0, 0));
   renderer->drawOnBitmap(renderConfig);
-  renderer->displayBitmap(renderConfig, drawManager);
+  renderer->display(renderConfig, drawManager);
   toolbar->draw(drawManager);
 }
 

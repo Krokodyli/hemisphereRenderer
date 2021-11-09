@@ -40,6 +40,15 @@ float Mesh::getRadius() {
   return radius;
 }
 
+Point3D<float> Mesh::getCenter() {
+  return center;
+}
+
+float Mesh::calculateZ(float x, float y) {
+  return std::sqrt(radius*radius
+                   - (x-center.x)*(x-center.x) - (y-center.y)*(y-center.y));
+}
+
 Point3D<float> *Mesh::getPoint(int p, int m) {
   if(p == 0 || m == 0)
     return points[0];

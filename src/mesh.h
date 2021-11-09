@@ -52,6 +52,8 @@ class Mesh {
   void setParallelCount(int newCount);
 
   float getRadius();
+  Point3D<float> getCenter();
+  float calculateZ(float x, float y);
 
   Point3D<float> *getPoint(int p, int m);
   const vector<Point3D<float>*> &getPoints();

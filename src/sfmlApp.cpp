@@ -12,7 +12,7 @@
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/WindowStyle.hpp>
 
-const int SFMLApp::framerateLimit = 10;
+const int SFMLApp::framerateLimit = 30;
 
 SFMLApp::SFMLApp(std::string title, Point<int> windowSize, std::string execPath)
   : App(title, windowSize), execPath(execPath) { }

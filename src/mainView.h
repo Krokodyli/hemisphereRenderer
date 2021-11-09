@@ -14,6 +14,9 @@ class MainView : public View {
   RenderConfig *renderConfig;
   Renderer *renderer;
 
+  bool goingUp = false;
+  bool goingLeft = false;
+
 public:
   MainView(Renderer *renderer);
   virtual ~MainView();

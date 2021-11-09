@@ -18,6 +18,12 @@ class Toolbar {
   Slider *meridianCountSlider;
   Slider *parallelsCountSlider;
 
+  Slider *lightColorRSlider;
+  Slider *lightColorGSlider;
+  Slider *lightColorBSlider;
+
+  Slider *kdSlider;
+
   void setUp();
 public:
   Toolbar(Point<float> position, Point<float> size);

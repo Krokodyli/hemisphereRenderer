@@ -11,9 +11,7 @@ struct Point {
   Point operator+(const Point &r);
   Point operator-(const Point &r);
   Point operator*(const T &r);
-  Point operator*(const double &r);
   Point operator/(const T &r);
-  Point operator/(const double &r);
   bool operator==(const Point &r);
   bool operator!=(const Point &r);
 
@@ -43,17 +41,7 @@ Point<T> Point<T>::operator*(const T &r) {
 }
 
 template <typename T>
-Point<T> Point<T>::operator*(const double &r) {
-  return Point(x * r, y * r);
-}
-
-template <typename T>
 Point<T> Point<T>::operator/(const T &r) {
-  return Point(x / r, y / r);
-}
-
-template <typename T>
-Point<T> Point<T>::operator/(const double &r) {
   return Point(x / r, y / r);
 }
 
