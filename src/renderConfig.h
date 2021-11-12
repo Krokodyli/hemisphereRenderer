@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Point3D.h"
+#include <vector>
 #include "color.h"
 #include "resourceManager.h"
 #include "bitmap.h"
@@ -76,6 +77,12 @@ public:
 
   Bitmap *getNormalMap();
   void setNormalMap(Bitmap *bitmap);
+
+  std::vector<std::string> getTexturesNames();
+  std::vector<std::string> getNormalMapsNames();
+
+  void setTexture(std::string name);
+  void setNormalMap(std::string name);
 
   Mesh *getMesh();
 };

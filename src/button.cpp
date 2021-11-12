@@ -1,9 +1,7 @@
 #include "button.h"
 
-Button::Button(Point<float> pos, Point<float> size, Color fillColor,
-               Color textColor, int fontSize)
-  : pos(pos), size(size), fillColor(fillColor), textColor(textColor),
-    fontSize(fontSize) { }
+Button::Button(Point<float> pos, Point<float> size, std::string label)
+  : pos(pos), size(size), label(label) { }
 
 void Button::setOnClickHandler(std::function<void(void)> eventHandler) {
   this->eventHandler = eventHandler;
@@ -11,7 +9,7 @@ void Button::setOnClickHandler(std::function<void(void)> eventHandler) {
 
 void Button::draw(DrawManager *drawManager) {
   drawManager->drawRectangle(pos, size, fillColor);
-  drawManager->drawText(pos, "button", fontSize, Color(255, 255, 255));
+  drawManager->drawText(pos + textOffset, label, fontSize, fontColor);
 }
 
 void Button::update(Controller *controller) {

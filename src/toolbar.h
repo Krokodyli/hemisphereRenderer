@@ -7,6 +7,7 @@
 #include "drawManager.h"
 #include "point.h"
 #include "renderConfig.h"
+#include "selectbox.h"
 #include "slider.h"
 
 class Toolbar {

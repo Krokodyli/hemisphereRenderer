@@ -1,6 +1,7 @@
 #include "appToolbar.h"
 #include "slider.h"
 #include "checkbox.h"
+#include "selectbox.h"
 
 AppToolbar::AppToolbar(Point<int> position, Point<int> size)
   : Toolbar(position, size) {
@@ -47,6 +48,10 @@ void AppToolbar::setUpControls() {
   pos.y += smallGap;
   makeSlider(&kSlider, pos, 0, 0.5, 1, SliderType::FloatPointSlider,
              "K factor");
+  pos.y += bigGap;
+  makeSelectbox(&textureSelectBox, pos, "Texture");
+  pos.y += smallGap;
+  makeSelectbox(&normalMapSelectBox, pos, "Normal map");
 }
 
 void AppToolbar::setUpEventHandlers(RenderConfig *renderConfig) {
@@ -103,6 +108,20 @@ void AppToolbar::setUpEventHandlers(RenderConfig *renderConfig) {
   spiralLightMoveCheckbox->setOnValueChangeHandler([renderConfig](bool val) {
     renderConfig->setSpiralMoveModeStatus(val);
   });
+
+  auto names = renderConfig->getTexturesNames();
+  names.push_back("None");
+  textureSelectBox->setElements(names);
+  textureSelectBox->setOnChangeHandler([renderConfig](std::string name) {
+    renderConfig->setTexture(name);
+  });
+
+  names = renderConfig->getNormalMapsNames();
+  names.push_back("None");
+  normalMapSelectBox->setElements(names);
+  normalMapSelectBox->setOnChangeHandler([renderConfig](std::string name) {
+    renderConfig->setNormalMap(name);
+  });
 }
 
 void AppToolbar::makeSlider(Slider **var, Point<float> pos, float min,
@@ -115,5 +134,11 @@ void AppToolbar::makeSlider(Slider **var, Point<float> pos, float min,
 void AppToolbar::makeCheckbox(Checkbox **var, Point<float> pos,
                               bool initialState, std::string label) {
   *var = new Checkbox(pos, initialState, label);
+  controls.push_back(*var);
+}
+
+void AppToolbar::makeSelectbox(Selectbox **var, Point<float> pos,
+                               std::string label) {
+  *var = new Selectbox(pos, label);
   controls.push_back(*var);
 }

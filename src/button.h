@@ -8,15 +8,18 @@
 
 class Button : public ToolbarControl {
  private:
+  const Color fillColor = Color(255, 255, 255);
+  const Color fontColor = Color(0, 0, 0);
+  const int fontSize = 12;
+  const Point<float> textOffset = Point<float>(4, 1);
+
   Point<float> pos, size;
-  Color fillColor, textColor;
-  int fontSize;
+  std::string label;
 
   std::function<void(void)> eventHandler;
 
  public:
-  Button(Point<float> pos, Point<float> size, Color fillColor,
-         Color textColor, int fontSize);
+  Button(Point<float> pos, Point<float> size, std::string label);
 
   void setOnClickHandler(std::function<void(void)> eventHandler);
 
