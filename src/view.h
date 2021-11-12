@@ -15,7 +15,7 @@ class View {
   virtual ~View();
 
   virtual void setup(App *_app, Point<int> _windowSize);
-  virtual void update(Controller *controller) = 0;
+  virtual void update(Controller *controller, float dt) = 0;
   virtual void draw(DrawManager *drawManager) = 0;
   virtual bool isRunning() = 0;
   virtual void destroy() = 0;

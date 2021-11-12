@@ -1,36 +1,31 @@
 #pragma once
 
-#include "point.h"
-#include "color.h"
-#include "drawManager.h"
-#include "controller.h"
-#include "slider.h"
 #include "button.h"
+#include "checkbox.h"
+#include "color.h"
+#include "controller.h"
+#include "drawManager.h"
+#include "point.h"
 #include "renderConfig.h"
+#include "slider.h"
 
 class Toolbar {
- private:
-  Point<float> position;
-  Point<float> size;
+ protected:
+  Point<int> position;
+  Point<int> size;
 
   Color backgroundColor;
 
-  Slider *meridianCountSlider;
-  Slider *parallelsCountSlider;
-
-  Slider *lightColorRSlider;
-  Slider *lightColorGSlider;
-  Slider *lightColorBSlider;
-
-  Slider *kdSlider;
+  std::vector<ToolbarControl*> controls;
 
   void setUp();
 public:
-  Toolbar(Point<float> position, Point<float> size);
-  ~Toolbar();
+  Toolbar(Point<int> position, Point<int> size);
+  virtual ~Toolbar();
 
-  void draw(DrawManager *drawManager);
-  void update(Controller *controller);
+  virtual void draw(DrawManager *drawManager);
+  virtual void update(Controller *controller);
 
-  void setUpEventHandlers(RenderConfig *renderConfig);
+  virtual void setUpControls() = 0;
+  virtual void setUpEventHandlers(RenderConfig *renderConfig) = 0;
 };

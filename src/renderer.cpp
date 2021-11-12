@@ -1,8 +1,11 @@
 #include "renderer.h"
 #include "color.h"
 
-Renderer::Renderer::Renderer(Point<int> canvasPosition, Point<int> canvasSize)
-  : canvasPosition(canvasPosition), canvasSize(canvasSize) { }
+Renderer::Renderer::Renderer(Point<int> canvasPosition, Point<int> canvasSize,
+                             Bitmap *canvas)
+  : canvasPosition(canvasPosition), canvasSize(canvasSize), canvas(canvas) {
+  canvas->fillWithColor(canvasSize, Color(0, 0, 0));
+}
 
 Renderer::~Renderer() {}
 
@@ -14,7 +17,8 @@ void Renderer::display(RenderConfig *renderConfig, DrawManager *drawManager) {
   auto oldOffset = drawManager->getOffset();
   drawManager->setOffset(canvasPosition);
 
-  displayBitmap(renderConfig, drawManager);
+  drawManager->drawBitmap(Point<float>(0, 0), canvas);
+  canvas->fillWithColor(Color(0, 0, 0));
 
   if(renderConfig->getRenderMeshModeStatus())
     drawMesh(renderConfig, drawManager);
@@ -124,7 +128,7 @@ void Renderer::drawScanline(RenderConfig *renderConfig,
       float z = mesh->calculateZ(x, y);
       auto point = Point3D<float>(x, y, z);
       auto color = ColorCalculator::calculate(renderConfig, point);
-      putPixel(x, y, color);
+      canvas->setPixelColor(x, y, color);
     }
   }
 }

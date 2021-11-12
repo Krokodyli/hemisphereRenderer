@@ -5,24 +5,28 @@
 #include "toolbar.h"
 #include "color.h"
 #include "renderer.h"
+#include "lightSpiralMoveHandler.h"
 
 class MainView : public View {
  private:
+  int meshRadius, toolbarWidth;
+
   bool isRunningFlag;
 
   Toolbar *toolbar;
   RenderConfig *renderConfig;
   Renderer *renderer;
+  ResourceManager *resourceManager;
 
-  bool goingUp = false;
-  bool goingLeft = false;
+  LightSpiralMoveHandler lightMoveHandler;
 
 public:
-  MainView(Renderer *renderer);
+  MainView(Renderer *renderer, Toolbar *toolbar,
+           ResourceManager *resourceManager, int meshRadius, int toolbarWidth);
   virtual ~MainView();
 
   virtual void setup(App *app, Point<int> _windowSize);
-  virtual void update(Controller *controller);
+  virtual void update(Controller *controller, float dt);
   virtual void draw(DrawManager *drawManager);
   virtual bool isRunning();
   virtual void destroy();

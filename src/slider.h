@@ -5,21 +5,29 @@
 #include "point.h"
 #include "drawManager.h"
 #include "controller.h"
+#include "toolbarControl.h"
 
 enum class SliderType {
   FloatPointSlider,
   IntegerSlider
 };
 
-class Slider {
+class Slider : public ToolbarControl {
   const Point<float> indicatorSize = Point<float>(10, 20);
+  const Point<float> barSize = Point<float>(100, 5);
+  const Color indicatorColor = Color(255, 255, 255);
+  const Color barColor = Color(255, 255, 255);
+  const Point<float> labelOffset = Point<float>(120, 0);
+  const int fontSize = 12;
+  const Color fontColor = Color(255, 255, 255);
 
   Point<float> pos;
-  float width;
 
   float value;
   float minValue, maxValue;
   SliderType sliderType;
+
+  std::string label;
 
   Point<float> indicatorPos;
 
@@ -31,11 +39,11 @@ class Slider {
   void handleMouseMove(float mouseXPos);
   bool isMouseOverIndicator(Point<float> mousePos);
 public:
-  Slider(Point<float> pos, float width, float currValue, float minValue,
-         float maxValue, SliderType sliderType);
+  Slider(Point<float> pos, float currValue, float minValue,
+         float maxValue, SliderType sliderType, std::string label);
 
   void setOnValueChangeHandler(std::function<void(float)> eventHandler);
 
-  void update(Controller *controller);
-  void draw(DrawManager *drawManager);
+  virtual void update(Controller *controller);
+  virtual void draw(DrawManager *drawManager);
 };

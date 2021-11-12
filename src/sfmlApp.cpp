@@ -3,7 +3,7 @@
 #include "sfmlController.h"
 #include "view.h"
 #include "mainView.h"
-#include "sfmlRenderer.h"
+#include "appToolbar.h"
 
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
@@ -12,10 +12,11 @@
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/WindowStyle.hpp>
 
-const int SFMLApp::framerateLimit = 30;
+const std::string SFMLApp::appTitle = "Triangular mesh hole filling";
 
-SFMLApp::SFMLApp(std::string title, Point<int> windowSize, std::string execPath)
-  : App(title, windowSize), execPath(execPath) { }
+SFMLApp::SFMLApp(std::string execPath)
+  : App(appTitle, Point<int>(windowWidth, windowHeight)),
+    execPath(execPath) { }
 
 SFMLApp::~SFMLApp() {
   while(!views.empty()) {
@@ -33,14 +34,25 @@ void SFMLApp::setup() {
                                 sf::Style::Titlebar | sf::Style::Close);
   window->setFramerateLimit(framerateLimit);
 
-  drawManager = new SFMLDrawManager(window, execPath);
+  SFMLResourceManager *resManager = new SFMLResourceManager(execPath);
+  resManager->loadResources(Point<int>(3.15f * meshRadius, 3.15f * meshRadius));
+
+  drawManager = new SFMLDrawManager(window, resManager);
   controller = new SFMLController(window);
 
   isAppRunning = true;
 
-  views.push(new MainView(new SFMLRenderer(Point<int>(windowSize.x/6.0, 0),
-                                           Point<int>(windowSize.x*5.0/6.0,
-                                                      windowSize.y))));
+  Toolbar *toolbar = new AppToolbar(Point<int>(0, 0), Point<int>(toolbarWidth,
+                                                                 windowSize.y));
+
+  Renderer *renderer = new Renderer(Point<int>(toolbarWidth, 0),
+                                    Point(windowWidth - toolbarWidth,
+                                          windowHeight),
+                                    new SFMLBitmap(Point<int>(1, 1),
+                                                   Color(0, 0, 0)));
+
+  views.push(new MainView(renderer, toolbar, resManager,
+                          meshRadius, toolbarWidth));
 }
 
 void SFMLApp::handleEvents() {
@@ -57,10 +69,14 @@ void SFMLApp::executeView(View *view) {
   View *currView = views.top();
   currView->setup(this, windowSize);
 
+  startClock();
   while (isAppRunning && currView->isRunning()) {
+    float dt = getDeltaTime();
+    startClock();
+
     handleEvents();
     controller->update();
-    currView->update(controller);
+    currView->update(controller, dt);
     currView->draw(drawManager);
     window->display();
   }

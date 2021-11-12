@@ -1,8 +1,9 @@
 #pragma once
 
-#include "resourceManager.h"
+#include <string>
 #include "point.h"
 #include "color.h"
+#include "bitmap.h"
 
 class DrawManager {
  protected:
@@ -21,5 +22,5 @@ class DrawManager {
                         Color color) = 0;
   virtual void drawText(Point<float> pos, std::string text, int fontSize,
                         Color color) = 0;
-  virtual void drawSprite(sf::Sprite *sprite) = 0;
+  virtual void drawBitmap(Point<float> pos, Bitmap *bitmap) = 0;
 };

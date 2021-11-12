@@ -3,9 +3,10 @@
 #include "point.h"
 #include "controller.h"
 #include "drawManager.h"
+#include "toolbarControl.h"
 #include <functional>
 
-class Button {
+class Button : public ToolbarControl {
  private:
   Point<float> pos, size;
   Color fillColor, textColor;
@@ -19,6 +20,6 @@ class Button {
 
   void setOnClickHandler(std::function<void(void)> eventHandler);
 
-  void draw(DrawManager *drawManager);
-  void update(Controller *controller);
+  virtual void draw(DrawManager *drawManager);
+  virtual void update(Controller *controller);
 };

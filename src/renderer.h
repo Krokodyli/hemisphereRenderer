@@ -16,6 +16,8 @@ class Renderer {
   Point<int> canvasPosition;
   Point<int> canvasSize;
 
+  Bitmap *canvas;
+
   std::thread threads[RENDERTHREADCOUNT];
 
   void fillTriangles(RenderConfig *renderConfig);
@@ -32,12 +34,9 @@ class Renderer {
   void deleteEdgeFromAET(AETVector &aet, Point3D<float> *v1,
                          Point3D<float> *v2);
 
-  virtual void putPixel(int x, int y, Color c) = 0;
-
-  virtual void displayBitmap(RenderConfig *renderConfig,
-                             DrawManager *drawManager) = 0;
 public:
-  Renderer(Point<int> canvasPosition, Point<int> canvasSize);
+  Renderer(Point<int> canvasPosition, Point<int> canvasSize,
+           Bitmap *bitmap);
   virtual ~Renderer();
   virtual void drawOnBitmap(RenderConfig *renderConfig);
   virtual void display(RenderConfig *renderConfig,

@@ -1,8 +1,12 @@
 #include "mainView.h"
 
-MainView::MainView(Renderer *renderer)
-  : isRunningFlag(false), toolbar(nullptr),
-    renderConfig(nullptr), renderer(renderer) { }
+MainView::MainView(Renderer *renderer, Toolbar *toolbar,
+                   ResourceManager *resourceManager, int meshRadius,
+                   int toolbarWidth)
+    : meshRadius(meshRadius), toolbarWidth(toolbarWidth), isRunningFlag(false),
+      toolbar(toolbar), renderConfig(nullptr), renderer(renderer),
+      resourceManager(resourceManager),
+      lightMoveHandler(1.0, 100, 800) { }
 
 MainView::~MainView() {
   destroy();
@@ -10,51 +14,28 @@ MainView::~MainView() {
 
 void MainView::setup(App *_app, Point<int> _windowSize) {
   View::setup(_app, _windowSize);
-  toolbar = new Toolbar(Point<float>(0.0f, 0.0f),
-                        Point<float>((float)windowSize.x/6.0,
-                                     (float)windowSize.y));
 
-  float meshX = (windowSize.x - (float)windowSize.x/6) / 2;
+  float meshX = (float)(windowSize.x - toolbarWidth) / 2;
   float meshY = 0.5f * windowSize.y;
-  float meshRadius = 0.48f * windowSize.y;
   auto mesh = new Mesh(Point3D<float>(meshX, meshY, 0.0f), meshRadius, 3, 16);
 
+  renderConfig = new RenderConfig(mesh);
+  renderConfig->loadResources(resourceManager);
 
-  auto initialLightPosition = Point3D<float>(meshX * 1.5, meshY,
-                                             meshRadius * 5);
-  renderConfig = new RenderConfig(mesh, initialLightPosition,
-                                  Color(255, 255, 255), 0.5f);
   toolbar->setUpEventHandlers(renderConfig);
 
   isRunningFlag = true;
 }
 
-void MainView::update(Controller *controller) {
+void MainView::update(Controller *controller, float dt) {
   toolbar->update(controller);
 
-  Point3D<float> lp = renderConfig->getLightPosition();
-  float dt = 100;
-  if(goingUp) {
-    lp.y -= dt;
-    if(lp.y < - 200)
-      goingUp = false;
+  if(renderConfig->getSpiralMoveModeStatus()) {
+    Point3D<float> lightPos = renderConfig->getLightPosition();
+    Point3D<float> centerPos = renderConfig->getMesh()->getCenter();
+    auto newPos = lightMoveHandler.getLightPosition(dt, lightPos, centerPos);
+    renderConfig->setLightPosition(newPos);
   }
-  else {
-    lp.y += dt;
-    if (lp.y > windowSize.y + 200)
-      goingUp = true;
-  }
-  if(goingLeft) {
-    lp.x -= dt * 0.5;
-    if(lp.x < -200)
-      goingLeft = false;
-  }
-  else {
-    lp.x += dt * 0.5;
-    if (lp.x > windowSize.x + 200)
-      goingLeft = true;
-  }
-  renderConfig->setLightPosition(lp);
 }
 
 void MainView::draw(DrawManager *drawManager) {
