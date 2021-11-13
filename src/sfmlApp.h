@@ -1,6 +1,7 @@
 #pragma once
 
 #include "app.h"
+#include "appConsts.h"
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/System/Vector2.hpp>
 
@@ -8,12 +9,7 @@ class View;
 
 class SFMLApp : public App {
  private:
-  static const int framerateLimit = 60;
-  static const int windowWidth = 1200;
-  static const int windowHeight = 900;
-  static const int meshRadius = 320;
-  static const int toolbarWidth = 300;
-  static const std::string appTitle;
+  AppConsts appConsts;
 
   std::string execPath;
   sf::RenderWindow *window;

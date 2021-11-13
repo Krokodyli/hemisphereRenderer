@@ -4,6 +4,8 @@
 
 class AppToolbar : public Toolbar {
  private:
+  AppConsts *appConsts;
+
   Checkbox *drawMeshCheckbox;
   Slider *meridianCountSlider;
   Slider *parallelsCountSlider;
@@ -33,7 +35,7 @@ class AppToolbar : public Toolbar {
   void makeSelectbox(Selectbox **var, Point<float> pos, std::string label);
 
 public:
-  AppToolbar(Point<int> position, Point<int> size);
+  AppToolbar(AppConsts *appConsts);
   virtual void setUpControls();
   virtual void setUpEventHandlers(RenderConfig *renderConfig);
 };

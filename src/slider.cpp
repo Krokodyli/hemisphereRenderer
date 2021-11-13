@@ -2,8 +2,9 @@
 #include "color.h"
 
 Slider::Slider(Point<float> pos, float currValue, float minValue,
-               float maxValue, SliderType sliderType, std::string label)
-  : pos(pos), value(currValue), minValue(minValue),
+               float maxValue, SliderType sliderType, std::string label,
+               const SliderTheme *sliderTheme)
+  : sliderTheme(sliderTheme), pos(pos), value(currValue), minValue(minValue),
     maxValue(maxValue), sliderType(sliderType), label(label),
     indicatorPos(0, 0), eventHandler(nullptr), isIndicatorGrabbed(false) {
   setValue(currValue);
@@ -31,9 +32,13 @@ void Slider::update(Controller *controller) {
 }
 
 void Slider::draw(DrawManager *drawManager) {
-  drawManager->drawRectangle(pos, Point<float>(barSize.x, barSize.y), barColor);
-  drawManager->drawRectangle(indicatorPos, indicatorSize, indicatorColor);
-  drawManager->drawText(pos + labelOffset, label, fontSize, fontColor);
+  drawManager->drawRectangle(pos, Point<float>(sliderTheme->barSize.x,
+                                               sliderTheme->barSize.y),
+                             sliderTheme->barColor);
+  drawManager->drawRectangle(indicatorPos, sliderTheme->indicatorSize,
+                             sliderTheme->indicatorColor);
+  drawManager->drawText(pos + sliderTheme->labelOffset, label,
+                        sliderTheme->fontSize, sliderTheme->fontColor);
 }
 
 void Slider::setValue(float newValue) {
@@ -42,16 +47,16 @@ void Slider::setValue(float newValue) {
   value = std::min(maxValue, value);
   if(sliderType == SliderType::IntegerSlider)
     value = round(value);
-  indicatorPos.x = pos.x - indicatorSize.x / 2 +
-    (value - minValue) / (maxValue - minValue) * barSize.x;
-  indicatorPos.y = pos.y - indicatorSize.y / 2;
+  indicatorPos.x = pos.x - sliderTheme->indicatorSize.x / 2 +
+    (value - minValue) / (maxValue - minValue) * sliderTheme->barSize.x;
+  indicatorPos.y = pos.y - sliderTheme->indicatorSize.y / 2;
 }
 
 void Slider::handleMouseMove(float mouseXPos) {
   mouseXPos = std::max(pos.x, mouseXPos);
-  mouseXPos = std::min(pos.x + barSize.x, mouseXPos);
+  mouseXPos = std::min(pos.x + sliderTheme->barSize.x, mouseXPos);
   auto newValue = minValue
-    + (maxValue - minValue) * (mouseXPos - pos.x) / barSize.x;
+    + (maxValue - minValue) * (mouseXPos - pos.x) / sliderTheme->barSize.x;
   if (newValue != value) {
     setValue(newValue);
     if (eventHandler)
@@ -61,5 +66,6 @@ void Slider::handleMouseMove(float mouseXPos) {
 
 bool Slider::isMouseOverIndicator(Point<float> mousePos) {
   return mousePos.insideRec(indicatorPos.x, indicatorPos.y,
-                            indicatorSize.x, indicatorSize.y);
+                            sliderTheme->indicatorSize.x,
+                            sliderTheme->indicatorSize.y);
 }

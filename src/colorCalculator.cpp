@@ -26,23 +26,23 @@ Color ColorCalculator::calculate(RenderConfig *renderConfig, Point3D<float> p,
 
 Color ColorCalculator::calculateExactColor(RenderConfig *renderConfig,
                                            Point3D<float> p) {
-  float kd = renderConfig->getKD();
-  float ks = renderConfig->getKS();
-  float k = renderConfig->getK();
-  int m = renderConfig->getM();
+  float kd = renderConfig->kd;
+  float ks = renderConfig->ks;
+  float k = renderConfig->k;
+  int m = renderConfig->m;
 
   auto texturePos =
-      calculateTexturePos(p, renderConfig->getMesh());
+      calculateTexturePos(p, renderConfig->mesh);
 
   auto I0 = colorToColorVector(renderConfig->getTextureColor(texturePos));
-  auto IL = colorToColorVector(renderConfig->getLightColor());
-  auto L = calculateVersorTo(p, renderConfig->getLightPosition());
+  auto IL = colorToColorVector(renderConfig->lightColor);
+  auto L = calculateVersorTo(p, renderConfig->lightPosition);
 
   auto normalColor = renderConfig->getNormalMapColor(texturePos);
 
-  auto N = calculateVersorTo(renderConfig->getMesh()->getCenter(), p);
-  if(normalColor.getR() > 0 || normalColor.getB() > 0 ||
-     normalColor.getG() > 0)
+  auto N = calculateVersorTo(renderConfig->mesh->getCenter(), p);
+  if(normalColor.r > 0 || normalColor.b > 0 ||
+     normalColor.g > 0)
     N = (N * k + normalMapColorToNormalVector(normalColor) * (1-k));
 
   auto cosNL = calculateCosineBetweenVectors(L, N);
@@ -78,14 +78,14 @@ Point3D<float> ColorCalculator::calculateVersorTo(Point3D<float> from,
 }
 
 Point3D<float> ColorCalculator::colorToColorVector(Color col) {
-  return Point3D<float>((float)col.getR()/255, (float)col.getG()/255,
-                        (float)col.getB()/255);
+  return Point3D<float>((float)col.r/255, (float)col.g/255,
+                        (float)col.b/255);
 }
 
 Point3D<float> ColorCalculator::normalMapColorToNormalVector(Color col) {
-  float x = ((float)col.getR()/255.0) * 2.0 - 1.0;
-  float y = ((float)col.getG() / 255.0) * 2.0 - 1.0;
-  float z = ((float)col.getB() / 255.0);
+  float x = ((float)col.r/255.0) * 2.0 - 1.0;
+  float y = ((float)col.g / 255.0) * 2.0 - 1.0;
+  float z = ((float)col.b / 255.0);
   return Point3D<float>(x, y, z);
 }
 

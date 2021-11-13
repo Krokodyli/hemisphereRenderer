@@ -47,15 +47,21 @@ bool SFMLController::wasLeftClickDouble(int gapInMiliseconds) {
   return leftClickTime - prevLeftClickTime <= gapInMiliseconds;
 }
 
-Point<float> SFMLController::getMousePos() { return mousePos - offset; }
+Point<float> SFMLController::getMousePos() {
+  auto offsetMousePos = mousePos - offset;
+  return Point<float>(offsetMousePos.x, offsetMousePos.y);
+}
 
-Point<float> SFMLController::getPrevMousePos() { return oldMousePos - offset; }
+Point<float> SFMLController::getPrevMousePos() {
+  auto offsetMousePos = oldMousePos - offset;
+  return Point<float>(offsetMousePos.x, offsetMousePos.y);
+}
 
-Point<float> SFMLController::getOffset() {
+Point<int> SFMLController::getOffset() {
   return offset;
 }
 
-void SFMLController::setOffset(Point<float> _offset) {
+void SFMLController::setOffset(Point<int> _offset) {
   offset = _offset;
 }
 

@@ -13,8 +13,7 @@ typedef std::vector<pair<Point3D<float> *, Point3D<float> *>> AETVector;
 
 class Renderer {
  protected:
-  Point<int> canvasPosition;
-  Point<int> canvasSize;
+  AppConsts *appConsts;
 
   Bitmap *canvas;
 
@@ -39,8 +38,7 @@ class Renderer {
                          Point3D<float> *v2);
 
 public:
-  Renderer(Point<int> canvasPosition, Point<int> canvasSize,
-           Bitmap *bitmap);
+  Renderer(Bitmap *bitmap, AppConsts *appConsts);
   virtual ~Renderer();
   virtual void drawOnBitmap(RenderConfig *renderConfig);
   virtual void display(RenderConfig *renderConfig,

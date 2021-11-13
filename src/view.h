@@ -5,16 +5,11 @@
 #include "controller.h"
 
 class View {
- protected:
-  App *app;
-
-  Point<int> windowSize;
-
  public:
   View();
   virtual ~View();
 
-  virtual void setup(App *_app, Point<int> _windowSize);
+  virtual void setup();
   virtual void update(Controller *controller, float dt) = 0;
   virtual void draw(DrawManager *drawManager) = 0;
   virtual bool isRunning() = 0;

@@ -6,11 +6,11 @@
 
 class MeshVerticesMoveHandler {
  private:
-  const Point<float> grabTolerance = Point<float>(3, 3);
+  Point<float> grabTolerance;
   Point3D<float> *grabbedVertex;
 
   bool isMouseOverPoint(Point<float> point, Point<float> mousePos);
  public:
-  MeshVerticesMoveHandler();
+  MeshVerticesMoveHandler(AppConsts *appConsts);
   void update(Controller *controller, RenderConfig *renderConfig);
 };

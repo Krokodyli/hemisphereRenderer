@@ -21,19 +21,19 @@ Color SFMLBitmap::getPixelColor(int x, int y) {
 }
 
 void SFMLBitmap::setPixelColor(int x, int y, Color color) {
-  auto sfColor = sf::Color(color.getR(), color.getG(), color.getB());
+  auto sfColor = sf::Color(color.r, color.g, color.b);
   image.setPixel(x, y, sfColor);
 }
 
 void SFMLBitmap::fillWithColor(Color color) {
   auto size = image.getSize();
-  image.create(size.x, size.y, sf::Color(color.getR(), color.getG(),
-                                         color.getB()));
+  image.create(size.x, size.y, sf::Color(color.r, color.g,
+                                         color.b));
 }
 
 void SFMLBitmap::fillWithColor(Point<int> size, Color color) {
   image.create(size.x, size.y,
-               sf::Color(color.getR(), color.getG(), color.getB()));
+               sf::Color(color.r, color.g, color.b));
 }
 
 void SFMLBitmap::draw(Point<float> pos, SFMLDrawManager *drawManager) {

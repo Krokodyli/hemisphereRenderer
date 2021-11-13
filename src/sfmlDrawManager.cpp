@@ -35,8 +35,8 @@ void SFMLDrawManager::drawText(Point<float> pos, std::string text, int fontSize,
                                Color color) {
   auto font = resourceManager->getFont();
   sf::Text drawableText(text, font, fontSize);
-  drawableText.setFillColor(sf::Color(color.getR(), color.getG(),
-                                      color.getB()));
+  drawableText.setFillColor(sf::Color(color.r, color.g,
+                                      color.b));
   drawableText.setPosition(sf::Vector2f(pos.x-offset.x, pos.y-offset.y));
   window->draw(drawableText);
 }
@@ -54,5 +54,5 @@ void SFMLDrawManager::drawSFMLImage(Point<float> pos, sf::Image *image) {
 }
 
 sf::Color SFMLDrawManager::colorToSFMLColor(Color c) {
-  return sf::Color(c.getR(), c.getG(), c.getB(), c.getA());
+  return sf::Color(c.r, c.g, c.b, c.a);
 }

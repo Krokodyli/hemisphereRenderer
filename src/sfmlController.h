@@ -8,11 +8,11 @@
 class SFMLController : public Controller {
 private:
   sf::RenderWindow *window;
-  Point<float> offset;
+  Point<int> offset;
 
   bool _isLeftPressed, _wasLeftPressed;
   bool _isRightPressed, _wasRightPressed;
-  Point<float> mousePos, oldMousePos;
+  Point<int> mousePos, oldMousePos;
 
   int prevLeftClickTime, leftClickTime;
 
@@ -36,6 +36,6 @@ public:
   virtual Point<float> getMousePos();
   virtual Point<float> getPrevMousePos();
 
-  virtual Point<float> getOffset();
-  virtual void setOffset(Point<float> _offset);
+  virtual Point<int> getOffset();
+  virtual void setOffset(Point<int> _offset);
 };

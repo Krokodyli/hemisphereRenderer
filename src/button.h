@@ -5,13 +5,11 @@
 #include "drawManager.h"
 #include "toolbarControl.h"
 #include <functional>
+#include "appConsts.h"
 
 class Button : public ToolbarControl {
  private:
-  const Color fillColor = Color(255, 255, 255);
-  const Color fontColor = Color(0, 0, 0);
-  const int fontSize = 12;
-  const Point<float> textOffset = Point<float>(4, 1);
+  const ButtonTheme *buttonTheme;
 
   Point<float> pos, size;
   std::string label;
@@ -19,7 +17,8 @@ class Button : public ToolbarControl {
   std::function<void(void)> eventHandler;
 
  public:
-  Button(Point<float> pos, Point<float> size, std::string label);
+  Button(Point<float> pos, Point<float> size, std::string label,
+         const ButtonTheme *buttonTheme);
 
   void setOnClickHandler(std::function<void(void)> eventHandler);
 

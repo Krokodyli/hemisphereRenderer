@@ -7,10 +7,11 @@
 #include "renderer.h"
 #include "lightSpiralMoveHandler.h"
 #include "meshVerticesMoveHandler.h"
+#include "appConsts.h"
 
 class MainView : public View {
  private:
-  int meshRadius, toolbarWidth;
+  AppConsts *appConsts;
 
   bool isRunningFlag;
 
@@ -18,18 +19,21 @@ class MainView : public View {
   RenderConfig *renderConfig;
   Renderer *renderer;
   ResourceManager *resourceManager;
-  float dt;
 
+  int fps;
 
   LightSpiralMoveHandler lightMoveHandler;
   MeshVerticesMoveHandler verticesMover;
 
+  void drawBackground(DrawManager *drawManager);
+  void drawFPSLabel(DrawManager *drawManager);
+  void moveLightSource(float dt);
 public:
   MainView(Renderer *renderer, Toolbar *toolbar,
-           ResourceManager *resourceManager, int meshRadius, int toolbarWidth);
+           ResourceManager *resourceManager, AppConsts *appConsts);
   virtual ~MainView();
 
-  virtual void setup(App *app, Point<int> _windowSize);
+  virtual void setup();
   virtual void update(Controller *controller, float dt);
   virtual void draw(DrawManager *drawManager);
   virtual bool isRunning();

@@ -17,11 +17,3 @@ Color::Color(unsigned int _r, unsigned int _g, unsigned int _b,
   b = _b;
   a = _a;
 }
-
-unsigned char Color::getR() { return r; }
-
-unsigned char Color::getG() { return g; }
-
-unsigned char Color::getB() { return b; }
-
-unsigned char Color::getA() { return a; }

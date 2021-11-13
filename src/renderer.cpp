@@ -2,10 +2,9 @@
 #include "color.h"
 #include "colorCalculator.h"
 
-Renderer::Renderer::Renderer(Point<int> canvasPosition, Point<int> canvasSize,
-                             Bitmap *canvas)
-  : canvasPosition(canvasPosition), canvasSize(canvasSize), canvas(canvas) {
-  canvas->fillWithColor(canvasSize, Color(0, 0, 0));
+Renderer::Renderer::Renderer(Bitmap *canvas, AppConsts *appConsts)
+  : appConsts(appConsts), canvas(canvas) {
+  canvas->fillWithColor(appConsts->canvasSize, appConsts->canvasColor);
 }
 
 Renderer::~Renderer() {}
@@ -16,23 +15,23 @@ void Renderer::drawOnBitmap(RenderConfig *renderConfig) {
 
 void Renderer::display(RenderConfig *renderConfig, DrawManager *drawManager) {
   auto oldOffset = drawManager->getOffset();
-  drawManager->setOffset(canvasPosition);
+  drawManager->setOffset(appConsts->canvasPos);
 
   drawManager->drawBitmap(Point<float>(0, 0), canvas);
-  canvas->fillWithColor(Color(0, 0, 0));
+  canvas->fillWithColor(appConsts->canvasColor);
 
-  if(renderConfig->getRenderMeshModeStatus())
+  if(renderConfig->renderMeshMode)
     drawMesh(renderConfig, drawManager);
 
   drawManager->setOffset(oldOffset);
 }
 
 void Renderer::drawMesh(RenderConfig *renderConfig, DrawManager *drawManager) {
-  auto edges = renderConfig->getMesh()->getEdges();
+  auto edges = renderConfig->mesh->getEdges();
   for(const auto &edge : edges) {
     Point<float> v1 = { edge.a->x, edge.a->y };
     Point<float> v2 = { edge.b->x, edge.b->y};
-    drawManager->drawLine(v1, v2, Color(255, 255, 255));
+    drawManager->drawLine(v1, v2, appConsts->meshEdgesColor);
   }
 }
 
@@ -40,14 +39,14 @@ void Renderer::fillTriangles(RenderConfig *renderConfig) {
   // edges will start to flicker (no suprise there) if you try to
   // parallelize approximated coloring, because edges of the triangles
   // are being drawn multiple times by different threads
-  if(renderConfig->getApproximateColoringMode())
+  if(renderConfig->approximateColoringMode)
     fillTrianglesSequential(renderConfig);
   else
     fillTrianglesParallel(renderConfig);
 }
 
 void Renderer::fillTrianglesParallel(RenderConfig *renderConfig) {
-  auto triangles = renderConfig->getMesh()->getTriangles();
+  auto triangles = renderConfig->mesh->getTriangles();
   for (unsigned int i = 0; i < RENDERTHREADCOUNT; i++) {
     threads[i] = std::thread([i, renderConfig, &triangles, this]() {
       for (unsigned int j = i; j < triangles.size(); j += RENDERTHREADCOUNT) {
@@ -60,7 +59,7 @@ void Renderer::fillTrianglesParallel(RenderConfig *renderConfig) {
 }
 
 void Renderer::fillTrianglesSequential(RenderConfig *renderConfig) {
-  auto triangles = renderConfig->getMesh()->getTriangles();
+  auto triangles = renderConfig->mesh->getTriangles();
   for(auto triangle : triangles)
     fillTriangle(renderConfig, &colorCalculators[0], triangle);
 }
@@ -82,7 +81,7 @@ void Renderer::fillPolygon(RenderConfig *renderConfig,
   findBoundaries(vertices, &ymin, &ymax);
   AETVector aet;
   vector<int> scanlinePoints;
-  float radius = renderConfig->getMesh()->getRadius();
+  float radius = renderConfig->mesh->getRadius();
   for(int y = ymin; y <= ymax; y++) {
     updateAET(y, aet, vertices);
     calculateScanline(aet, y, scanlinePoints);
@@ -140,14 +139,14 @@ void Renderer::calculateScanline(AETVector &aet, float y,
 void Renderer::drawScanline(RenderConfig *renderConfig,
                             ColorCalculator *colorCalc,
                             vector<int> &scanlinePoints, int y, float r) {
-  auto mesh = renderConfig->getMesh();
+  auto mesh = renderConfig->mesh;
   for (int i = 0; i < (int)scanlinePoints.size() - 1; i += 2) {
     int x1 = scanlinePoints[i];
     int x2 = scanlinePoints[i+1];
     for(int x = x1; x <= x2; x++) {
       float z = mesh->calculateZ(x, y);
       auto point = Point3D<float>(x, y, z);
-      auto coloringMode = renderConfig->getApproximateColoringMode();
+      auto coloringMode = renderConfig->approximateColoringMode;
       auto color = colorCalc->calculate(renderConfig, point, coloringMode);
       canvas->setPixelColor(x, y, color);
     }

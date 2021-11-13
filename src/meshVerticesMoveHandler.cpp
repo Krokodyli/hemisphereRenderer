@@ -1,12 +1,14 @@
 #include "meshVerticesMoveHandler.h"
 
-MeshVerticesMoveHandler::MeshVerticesMoveHandler()
-  : grabbedVertex(nullptr) { }
+MeshVerticesMoveHandler::MeshVerticesMoveHandler(AppConsts *appConsts)
+  : grabTolerance(appConsts->verticesGrabTolerance),
+    grabbedVertex(nullptr) { }
 
 void MeshVerticesMoveHandler::update(Controller *controller,
                                 RenderConfig *renderConfig) {
-  auto mesh = renderConfig->getMesh();
+  auto mesh = renderConfig->mesh;
   auto mousePos = controller->getMousePos();
+
   if(controller->isLeftClicked()) {
     grabbedVertex = nullptr;
     for(auto meshPoint : mesh->getPoints()) {

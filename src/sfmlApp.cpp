@@ -1,4 +1,5 @@
 #include "sfmlApp.h"
+#include "sfmlBitmap.h"
 #include "sfmlDrawManager.h"
 #include "sfmlController.h"
 #include "view.h"
@@ -12,47 +13,33 @@
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/WindowStyle.hpp>
 
-const std::string SFMLApp::appTitle = "Triangular mesh hole filling";
-
 SFMLApp::SFMLApp(std::string execPath)
-  : App(appTitle, Point<int>(windowWidth, windowHeight)),
-    execPath(execPath) { }
+  : execPath(execPath) { }
 
-SFMLApp::~SFMLApp() {
-  while(!views.empty()) {
-    View *view = views.top();
-    views.pop();
-    delete view;
-  }
-  delete drawManager;
-  delete controller;
-}
+SFMLApp::~SFMLApp() { }
 
 void SFMLApp::setup() {
-  window = new sf::RenderWindow(sf::VideoMode(windowSize.x, windowSize.y, 32),
-                                title,
+  window = new sf::RenderWindow(sf::VideoMode(appConsts.windowSize.x,
+                                              appConsts.windowSize.y, 32),
+                                appConsts.appTitle,
                                 sf::Style::Titlebar | sf::Style::Close);
-  window->setFramerateLimit(framerateLimit);
+  window->setFramerateLimit(appConsts.framerateLimit);
 
   SFMLResourceManager *resManager = new SFMLResourceManager(execPath);
-  resManager->loadResources(Point<int>(3.15f * meshRadius, 3.15f * meshRadius));
+  resManager->loadResources(appConsts.textureExpectedSize);
+  resourceManager = resManager;
 
   drawManager = new SFMLDrawManager(window, resManager);
   controller = new SFMLController(window);
 
+  Toolbar *toolbar = new AppToolbar(&appConsts);
+
+  auto bitmapTemplate = new SFMLBitmap(Point<int>(1, 1), Color(0, 0, 0));
+  Renderer *renderer = new Renderer(bitmapTemplate, &appConsts);
+
   isAppRunning = true;
 
-  Toolbar *toolbar = new AppToolbar(Point<int>(0, 0), Point<int>(toolbarWidth,
-                                                                 windowSize.y));
-
-  Renderer *renderer = new Renderer(Point<int>(toolbarWidth, 0),
-                                    Point(windowWidth - toolbarWidth,
-                                          windowHeight),
-                                    new SFMLBitmap(Point<int>(1, 1),
-                                                   Color(0, 0, 0)));
-
-  views.push(new MainView(renderer, toolbar, resManager,
-                          meshRadius, toolbarWidth));
+  views.push(new MainView(renderer, toolbar, resManager, &appConsts));
 }
 
 void SFMLApp::handleEvents() {
@@ -67,7 +54,7 @@ void SFMLApp::executeView(View *view) {
     return;
 
   View *currView = views.top();
-  currView->setup(this, windowSize);
+  currView->setup();
 
   startClock();
   while (isAppRunning && currView->isRunning()) {

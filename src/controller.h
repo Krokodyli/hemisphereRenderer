@@ -20,6 +20,6 @@ public:
   virtual Point<float> getMousePos() = 0;
   virtual Point<float> getPrevMousePos() = 0;
 
-  virtual Point<float> getOffset() = 0;
-  virtual void setOffset(Point<float> _offset) = 0;
+  virtual Point<int> getOffset() = 0;
+  virtual void setOffset(Point<int> _offset) = 0;
 };

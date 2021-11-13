@@ -1,4 +1,6 @@
 build/
 bin/
 todo.org
+data/textures/
+data/normalMaps/
 .cache

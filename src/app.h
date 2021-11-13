@@ -7,16 +7,15 @@
 #include "point.h"
 #include "drawManager.h"
 #include "controller.h"
+#include "sfmlResourceManager.h"
 
 class View;
 
 class App {
  protected:
-  std::string title;
-  Point<int> windowSize;
-
   DrawManager *drawManager;
   Controller *controller;
+  ResourceManager *resourceManager;
 
   std::stack<View*> views;
   bool isAppRunning;
@@ -30,7 +29,7 @@ class App {
   void startClock();
   float getDeltaTime();
 public:
-  App(std::string title, Point<int> windowSize);
+  App();
   virtual ~App();
 
   virtual void pushView(View *newView);

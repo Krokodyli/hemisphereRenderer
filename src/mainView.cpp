@@ -1,25 +1,28 @@
 #include "mainView.h"
 
 MainView::MainView(Renderer *renderer, Toolbar *toolbar,
-                   ResourceManager *resourceManager, int meshRadius,
-                   int toolbarWidth)
-    : meshRadius(meshRadius), toolbarWidth(toolbarWidth), isRunningFlag(false),
-      toolbar(toolbar), renderConfig(nullptr), renderer(renderer),
-      resourceManager(resourceManager),
-      lightMoveHandler(1.0, 100, 800) { }
+                   ResourceManager *resourceManager, AppConsts *appConsts)
+  : appConsts(appConsts), isRunningFlag(false),
+    toolbar(toolbar), renderConfig(nullptr), renderer(renderer),
+    resourceManager(resourceManager),
+    lightMoveHandler(appConsts->spiralMovePeriodTime,
+                     appConsts->spiralMovePeriodDistance,
+                     appConsts->spiralMoveRange),
+    verticesMover(appConsts) { }
 
 MainView::~MainView() {
   destroy();
 }
 
-void MainView::setup(App *_app, Point<int> _windowSize) {
-  View::setup(_app, _windowSize);
+void MainView::setup() {
+  auto mesh = new Mesh(Point3D<float>(appConsts->relativeMeshPos.x,
+                                      appConsts->relativeMeshPos.y,
+                                      appConsts->meshZPos),
+                       appConsts->meshRadius,
+                       appConsts->defaultParallelCount,
+                       appConsts->defaultMeridianCount);
 
-  float meshX = (float)(windowSize.x - toolbarWidth) / 2;
-  float meshY = 0.5f * windowSize.y;
-  auto mesh = new Mesh(Point3D<float>(meshX, meshY, 0.0f), meshRadius, 3, 16);
-
-  renderConfig = new RenderConfig(mesh);
+  renderConfig = new RenderConfig(mesh, appConsts);
   renderConfig->loadResources(resourceManager);
 
   toolbar->setUpEventHandlers(renderConfig);
@@ -28,30 +31,28 @@ void MainView::setup(App *_app, Point<int> _windowSize) {
 }
 
 void MainView::update(Controller *controller, float dt) {
+  auto oldOffset = controller->getOffset();
+  fps = 1/dt;
+
+  controller->setOffset(appConsts->toolbarPos);
   toolbar->update(controller);
-  this->dt = dt;
 
-  if(renderConfig->getSpiralMoveModeStatus()) {
-    Point3D<float> lightPos = renderConfig->getLightPosition();
-    Point3D<float> centerPos = renderConfig->getMesh()->getCenter();
-    auto newPos = lightMoveHandler.getLightPosition(dt, lightPos, centerPos);
-    renderConfig->setLightPosition(newPos);
-  }
-
-  controller->setOffset(Point<float>(300, 0)); // TODO
+  controller->setOffset(appConsts->canvasPos);
   verticesMover.update(controller, renderConfig);
-  controller->setOffset(Point<float>(0, 0));
+
+  controller->setOffset(oldOffset);
+
+  moveLightSource(dt);
 }
 
 void MainView::draw(DrawManager *drawManager) {
-  drawManager->drawRectangle(Point<float>(0, 0),
-                             Point<float>(windowSize.x, windowSize.y),
-                             Color(0, 0, 0));
+  drawBackground(drawManager);
+
   renderer->drawOnBitmap(renderConfig);
   renderer->display(renderConfig, drawManager);
   toolbar->draw(drawManager);
-  drawManager->drawText(Point<float>(1000, 100), std::to_string((int)(1 / dt)),
-                        20, Color(255, 0, 0));
+
+  drawFPSLabel(drawManager);
 }
 
 bool MainView::isRunning() {
@@ -66,4 +67,28 @@ void MainView::destroy() {
   if(renderConfig)
     delete renderConfig;
   renderConfig = nullptr;
+}
+
+void MainView::drawBackground(DrawManager *drawManager) {
+  drawManager->drawRectangle(
+      Point<float>(0, 0),
+      Point<float>(appConsts->windowSize.x, appConsts->windowSize.y),
+      appConsts->canvasColor);
+}
+
+void MainView::drawFPSLabel(DrawManager *drawManager) {
+  if (appConsts->showFPS) {
+    drawManager->drawText(appConsts->fpsLabelPosition, std::to_string(fps),
+                          appConsts->fpsLabelFontSize,
+                          appConsts->fpsLabelColor);
+  }
+}
+
+void MainView::moveLightSource(float dt) {
+  if (renderConfig->spiralMoveMode) {
+    Point3D<float> lightPos = renderConfig->lightPosition;
+    Point3D<float> centerPos = renderConfig->mesh->getCenter();
+    auto newPos = lightMoveHandler.getLightPosition(dt, lightPos, centerPos);
+    renderConfig->lightPosition = newPos;
+  }
 }

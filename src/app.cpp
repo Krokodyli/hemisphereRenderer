@@ -3,12 +3,23 @@
 #include "view.h"
 #include <chrono>
 
-App::App(std::string title, Point<int> windowSize)
-  : title(title), windowSize(windowSize),
-    drawManager(nullptr), controller(nullptr),
+App::App()
+  : drawManager(nullptr), controller(nullptr), resourceManager(nullptr),
     isAppRunning(false) { }
 
-App::~App() {}
+App::~App() {
+  while (!views.empty()) {
+    View *view = views.top();
+    views.pop();
+    delete view;
+  }
+  if (drawManager != nullptr)
+    delete drawManager;
+  if (controller != nullptr)
+    delete controller;
+  if(resourceManager != nullptr)
+    delete resourceManager;
+}
 
 void App::pushView(View *newView) {
   views.push(newView);

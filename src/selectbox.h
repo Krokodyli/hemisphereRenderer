@@ -5,12 +5,7 @@
 
 class Selectbox : public ToolbarControl {
  private:
-  const Color fontColor = Color(255, 255, 255);
-  const int fontSize = 12;
-  const Point<float> buttonSize = Point<float>(15, 15);
-  const float buttonGap = 10;
-  const float textWidth = 150;
-  const unsigned int maxStringSize = 21;
+  const SelectboxTheme *theme;
 
   Point<float> pos;
   std::string label;
@@ -24,7 +19,7 @@ class Selectbox : public ToolbarControl {
 
   void tryToInvokeEventHandler();
  public:
-  Selectbox(Point<float> pos, std::string label);
+  Selectbox(Point<float> pos, std::string label, const SelectboxTheme *theme);
 
   void setOnChangeHandler(std::function<void(std::string val)> eventHandler);
   void setElements(std::vector<std::string> newElements);

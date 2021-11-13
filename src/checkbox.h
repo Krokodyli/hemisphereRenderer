@@ -1,16 +1,12 @@
 #pragma once
 
 #include "toolbarControl.h"
+#include "appConsts.h"
 #include <functional>
 
 class Checkbox : public ToolbarControl {
  private:
-  const float size = 20;
-  const Point<float> labelOffset = Point<float>(30, 4);
-  const Color boxColor = Color(255, 255, 255);
-  const Color crossColor = Color(0, 0, 0);
-  const int fontSize = 12;
-  const Color fontColor = Color(255, 255, 255);
+  const CheckboxTheme *theme;
 
   Point<float> pos;
   bool isActivated;
@@ -22,7 +18,8 @@ class Checkbox : public ToolbarControl {
   bool isCheckboxClicked(Controller *controller);
 
  public:
-  Checkbox(Point<float> pos, bool initialState, std::string label);
+  Checkbox(Point<float> pos, bool initialState, std::string label,
+           const CheckboxTheme *theme);
   virtual ~Checkbox();
 
   void setOnValueChangeHandler(std::function<void(bool)> eventHandler);
