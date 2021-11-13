@@ -6,6 +6,7 @@
 #include "color.h"
 #include "renderer.h"
 #include "lightSpiralMoveHandler.h"
+#include "meshVerticesMoveHandler.h"
 
 class MainView : public View {
  private:
@@ -17,8 +18,11 @@ class MainView : public View {
   RenderConfig *renderConfig;
   Renderer *renderer;
   ResourceManager *resourceManager;
+  float dt;
+
 
   LightSpiralMoveHandler lightMoveHandler;
+  MeshVerticesMoveHandler verticesMover;
 
 public:
   MainView(Renderer *renderer, Toolbar *toolbar,

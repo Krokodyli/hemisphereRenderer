@@ -163,6 +163,14 @@ void RenderConfig::setNormalMap(std::string name) {
     currNormalMap = nullptr;
 }
 
+bool RenderConfig::getApproximateColoringMode() {
+  return approximateColoringMode;
+}
+
+void RenderConfig::setApproximateColoringMode(bool val) {
+  approximateColoringMode = val;
+}
+
 Mesh *RenderConfig::getMesh() {
   return mesh;
 }

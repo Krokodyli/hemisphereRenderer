@@ -45,8 +45,13 @@ Point3D<float> Mesh::getCenter() {
 }
 
 float Mesh::calculateZ(float x, float y) {
-  return std::sqrt(radius*radius
-                   - (x-center.x)*(x-center.x) - (y-center.y)*(y-center.y));
+  // Sometimes errors in floating point arithmetics cause
+  // zsqr to be negative
+  float zsqr = radius * radius - (x-center.x) * (x-center.x)
+    - (y-center.y) * (y-center.y);
+  if (zsqr < 0)
+    zsqr = 0;
+  return std::sqrt(zsqr) + center.z;
 }
 
 Point3D<float> *Mesh::getPoint(int p, int m) {
@@ -89,10 +94,10 @@ void Mesh::generatePoints() {
     float r = (float)i / parallelCount * radius;
     for (int j = 0; j < meridianCount; j++) {
       float phi = 2.0f * M_PI * j / (float)meridianCount;
-      float x = r * cos(phi);
-      float y = r * sin(phi);
-      float z = sqrt(radius * radius - x * x - y * y);
-      addPoint(center.x + x, center.y + y, center.z + z);
+      float x = r * cos(phi) + center.x;
+      float y = r * sin(phi) + center.y;
+      float z = calculateZ(x, y);
+      addPoint(x, y, z);
     }
   }
 }

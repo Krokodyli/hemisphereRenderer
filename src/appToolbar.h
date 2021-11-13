@@ -23,6 +23,8 @@ class AppToolbar : public Toolbar {
   Selectbox *textureSelectBox;
   Selectbox *normalMapSelectBox;
 
+  Checkbox *approxColoringModeCheckbox;
+
   void makeSlider(Slider **var, Point<float> pos, float min, float curr,
                   float max, SliderType type, std::string label);
   void makeCheckbox(Checkbox **var, Point<float> pos, bool initialState,

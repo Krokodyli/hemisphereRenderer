@@ -52,6 +52,9 @@ void AppToolbar::setUpControls() {
   makeSelectbox(&textureSelectBox, pos, "Texture");
   pos.y += smallGap;
   makeSelectbox(&normalMapSelectBox, pos, "Normal map");
+  pos.y += bigGap;
+  makeCheckbox(&approxColoringModeCheckbox, pos, false,
+               "Approximate coloring mode");
 }
 
 void AppToolbar::setUpEventHandlers(RenderConfig *renderConfig) {
@@ -107,6 +110,10 @@ void AppToolbar::setUpEventHandlers(RenderConfig *renderConfig) {
 
   spiralLightMoveCheckbox->setOnValueChangeHandler([renderConfig](bool val) {
     renderConfig->setSpiralMoveModeStatus(val);
+  });
+
+  approxColoringModeCheckbox->setOnValueChangeHandler([renderConfig](bool val) {
+    renderConfig->setApproximateColoringMode(val);
   });
 
   auto names = renderConfig->getTexturesNames();

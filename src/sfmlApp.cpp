@@ -73,7 +73,6 @@ void SFMLApp::executeView(View *view) {
   while (isAppRunning && currView->isRunning()) {
     float dt = getDeltaTime();
     startClock();
-
     handleEvents();
     controller->update();
     currView->update(controller, dt);

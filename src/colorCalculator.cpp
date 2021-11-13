@@ -1,7 +1,31 @@
 #include "colorCalculator.h"
 #include "mesh.h"
 
-Color ColorCalculator::calculate(RenderConfig *renderConfig, Point3D<float> p) {
+ColorCalculator::ColorCalculator()
+  : currTriangle(nullptr, nullptr, nullptr),
+    vertexAColor(0, 0, 0), vertexBColor(0, 0, 0), vertexCColor(0, 0, 0) { }
+
+void ColorCalculator::setCurrentTriangle(RenderConfig *renderConfig,
+                                         MeshTriangle currTriangle) {
+  this->currTriangle = currTriangle;
+  vertexAColor = colorToColorVector(calculateExactColor(renderConfig,
+                                                        *currTriangle.a));
+  vertexBColor = colorToColorVector(calculateExactColor(renderConfig,
+                                                        *currTriangle.b));
+  vertexCColor = colorToColorVector(calculateExactColor(renderConfig,
+                                                        *currTriangle.c));
+}
+
+Color ColorCalculator::calculate(RenderConfig *renderConfig, Point3D<float> p,
+                                 bool approxColoringMode) {
+  if(!approxColoringMode)
+    return calculateExactColor(renderConfig, p);
+  else
+    return calculateApproxColor(renderConfig, p);
+}
+
+Color ColorCalculator::calculateExactColor(RenderConfig *renderConfig,
+                                           Point3D<float> p) {
   float kd = renderConfig->getKD();
   float ks = renderConfig->getKS();
   float k = renderConfig->getK();
@@ -33,6 +57,17 @@ Color ColorCalculator::calculate(RenderConfig *renderConfig, Point3D<float> p) {
   auto I = fixColorVector(IL * kd * I0 * cosNL) +
     fixColorVector(IL * ks * I0 * cosRV);
   return colorVectorToColor(fixColorVector(I));
+}
+
+Color ColorCalculator::calculateApproxColor(RenderConfig *renderConfig,
+                                            Point3D<float> p) {
+  float aDis = p.dis(*currTriangle.a);
+  float bDis = p.dis(*currTriangle.b);
+  float cDis = p.dis(*currTriangle.c);
+  float disSum = aDis + bDis + cDis;
+  auto color = ((vertexAColor * aDis) + (vertexBColor * bDis)
+                + (vertexCColor * cDis)) / disSum;
+  return colorVectorToColor(color);
 }
 
 Point3D<float> ColorCalculator::calculateVersorTo(Point3D<float> from,

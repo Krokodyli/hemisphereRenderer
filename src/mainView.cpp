@@ -29,6 +29,7 @@ void MainView::setup(App *_app, Point<int> _windowSize) {
 
 void MainView::update(Controller *controller, float dt) {
   toolbar->update(controller);
+  this->dt = dt;
 
   if(renderConfig->getSpiralMoveModeStatus()) {
     Point3D<float> lightPos = renderConfig->getLightPosition();
@@ -36,6 +37,10 @@ void MainView::update(Controller *controller, float dt) {
     auto newPos = lightMoveHandler.getLightPosition(dt, lightPos, centerPos);
     renderConfig->setLightPosition(newPos);
   }
+
+  controller->setOffset(Point<float>(300, 0)); // TODO
+  verticesMover.update(controller, renderConfig);
+  controller->setOffset(Point<float>(0, 0));
 }
 
 void MainView::draw(DrawManager *drawManager) {
@@ -45,6 +50,8 @@ void MainView::draw(DrawManager *drawManager) {
   renderer->drawOnBitmap(renderConfig);
   renderer->display(renderConfig, drawManager);
   toolbar->draw(drawManager);
+  drawManager->drawText(Point<float>(1000, 100), std::to_string((int)(1 / dt)),
+                        20, Color(255, 0, 0));
 }
 
 bool MainView::isRunning() {

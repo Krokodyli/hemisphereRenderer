@@ -1,5 +1,6 @@
 #include "renderer.h"
 #include "color.h"
+#include "colorCalculator.h"
 
 Renderer::Renderer::Renderer(Point<int> canvasPosition, Point<int> canvasSize,
                              Bitmap *canvas)
@@ -36,29 +37,47 @@ void Renderer::drawMesh(RenderConfig *renderConfig, DrawManager *drawManager) {
 }
 
 void Renderer::fillTriangles(RenderConfig *renderConfig) {
+  // edges will start to flicker (no suprise there) if you try to
+  // parallelize approximated coloring, because edges of the triangles
+  // are being drawn multiple times by different threads
+  if(renderConfig->getApproximateColoringMode())
+    fillTrianglesSequential(renderConfig);
+  else
+    fillTrianglesParallel(renderConfig);
+}
+
+void Renderer::fillTrianglesParallel(RenderConfig *renderConfig) {
   auto triangles = renderConfig->getMesh()->getTriangles();
-  for(unsigned int i  = 0; i < triangles.size(); i += RENDERTHREADCOUNT) {
-    int e = std::min((unsigned int)triangles.size(), i + RENDERTHREADCOUNT) - 1;
-    for(int j = i; j <= e; j++) {
-      threads[j - i] = std::thread(&Renderer::fillTriangle, this,
-                                   renderConfig, triangles[j]);
-    }
-    for (int j = i; j <= e; j++)
-      threads[j - i].join();
+  for (unsigned int i = 0; i < RENDERTHREADCOUNT; i++) {
+    threads[i] = std::thread([i, renderConfig, &triangles, this]() {
+      for (unsigned int j = i; j < triangles.size(); j += RENDERTHREADCOUNT) {
+        fillTriangle(renderConfig, &colorCalculators[i], triangles[j]);
+      }
+    });
   }
+  for (unsigned int i = 0; i < RENDERTHREADCOUNT; i++)
+    threads[i].join();
+}
+
+void Renderer::fillTrianglesSequential(RenderConfig *renderConfig) {
+  auto triangles = renderConfig->getMesh()->getTriangles();
+  for(auto triangle : triangles)
+    fillTriangle(renderConfig, &colorCalculators[0], triangle);
 }
 
 void Renderer::fillTriangle(RenderConfig *renderConfig,
-                                MeshTriangle triangle) {
+                            ColorCalculator *colorCalc, MeshTriangle triangle) {
   vector<Point3D<float>*> vertices;
+  colorCalc->setCurrentTriangle(renderConfig, triangle);
   vertices.push_back(triangle.a);
   vertices.push_back(triangle.b);
   vertices.push_back(triangle.c);
-  fillPolygon(renderConfig, vertices);
+  fillPolygon(renderConfig, colorCalc, vertices);
 }
 
 void Renderer::fillPolygon(RenderConfig *renderConfig,
-                               vector<Point3D<float>*> &vertices) {
+                           ColorCalculator *colorCalc,
+                           vector<Point3D<float>*> &vertices) {
   int ymin, ymax;
   findBoundaries(vertices, &ymin, &ymax);
   AETVector aet;
@@ -67,7 +86,7 @@ void Renderer::fillPolygon(RenderConfig *renderConfig,
   for(int y = ymin; y <= ymax; y++) {
     updateAET(y, aet, vertices);
     calculateScanline(aet, y, scanlinePoints);
-    drawScanline(renderConfig, scanlinePoints, y, radius);
+    drawScanline(renderConfig, colorCalc, scanlinePoints, y, radius);
   }
 }
 
@@ -119,7 +138,8 @@ void Renderer::calculateScanline(AETVector &aet, float y,
 }
 
 void Renderer::drawScanline(RenderConfig *renderConfig,
-                                vector<int> &scanlinePoints, int y, float r) {
+                            ColorCalculator *colorCalc,
+                            vector<int> &scanlinePoints, int y, float r) {
   auto mesh = renderConfig->getMesh();
   for (int i = 0; i < (int)scanlinePoints.size() - 1; i += 2) {
     int x1 = scanlinePoints[i];
@@ -127,7 +147,8 @@ void Renderer::drawScanline(RenderConfig *renderConfig,
     for(int x = x1; x <= x2; x++) {
       float z = mesh->calculateZ(x, y);
       auto point = Point3D<float>(x, y, z);
-      auto color = ColorCalculator::calculate(renderConfig, point);
+      auto coloringMode = renderConfig->getApproximateColoringMode();
+      auto color = colorCalc->calculate(renderConfig, point, coloringMode);
       canvas->setPixelColor(x, y, color);
     }
   }

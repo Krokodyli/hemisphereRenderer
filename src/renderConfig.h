@@ -21,6 +21,8 @@ class RenderConfig {
   int m;
   float k;
 
+  bool approximateColoringMode;
+
   bool renderMeshMode;
   bool spiralMoveMode;
 
@@ -83,6 +85,9 @@ public:
 
   void setTexture(std::string name);
   void setNormalMap(std::string name);
+
+  bool getApproximateColoringMode();
+  void setApproximateColoringMode(bool val);
 
   Mesh *getMesh();
 };
