@@ -42,8 +42,11 @@ Color ColorCalculator::calculateExactColor(RenderConfig *renderConfig,
 
   auto N = calculateVersorTo(renderConfig->mesh->getCenter(), p);
   if(normalColor.r > 0 || normalColor.b > 0 ||
-     normalColor.g > 0)
-    N = (N * k + normalMapColorToNormalVector(normalColor) * (1-k));
+     normalColor.g > 0) {
+    auto normalMapVect = normalMapColorToNormalVector(normalColor);
+    normalMapVect = joinNormalVectors(N, normalMapVect);
+    N = (N * k + normalMapVect * (1-k));
+  }
 
   auto cosNL = calculateCosineBetweenVectors(L, N);
 
@@ -51,11 +54,12 @@ Color ColorCalculator::calculateExactColor(RenderConfig *renderConfig,
 
   auto R = N * 2.0 * L.dot(N) - L;
 
-  auto cosRV = calculateCosineBetweenVectors(V, R);
-  cosRV = fastExp(cosRV, m);
+  auto cosVR = calculateCosineBetweenVectors(V, R);
+  cosVR = fastExp(cosVR, m);
 
   auto I = fixColorVector(IL * kd * I0 * cosNL) +
-    fixColorVector(IL * ks * I0 * cosRV);
+    fixColorVector(IL * ks * I0 * cosVR);
+
   return colorVectorToColor(fixColorVector(I));
 }
 
@@ -135,7 +139,25 @@ Point<float> ColorCalculator::calculateTexturePos(Point3D<float> p,
 
   auto vector = p2 * dis;
 
-  return Point<float>(vector.x + 504, vector.y + 504);
+  return Point<float>(vector.x + radius * 3.15f / 2,
+                      vector.y + radius * 3.15 / 2);
+}
+
+Point3D<float>
+ColorCalculator::joinNormalVectors(Point3D<float> sphereNormalVect,
+                                   Point3D<float> normalMapVect) {
+  Point3D<float> n(sphereNormalVect);
+  Point3D<float> p(normalMapVect);
+
+  Point3D<float> b(0, 1, 0);
+  if(sphereNormalVect != Point3D<float>(0, 0, 1))
+    b = sphereNormalVect.cross(Point3D<float>(0, 0, 1));
+
+  auto t = b.cross(sphereNormalVect);
+
+  return Point3D<float>(t.x*p.x + b.x*p.x + n.x*p.x,
+                        t.y*p.y + b.y*p.y + n.y*p.y,
+                        t.z*p.z + b.z*p.z + n.z*p.z);
 }
 
 float ColorCalculator::fastExp(float base, int power) {

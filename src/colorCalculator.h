@@ -21,9 +21,14 @@ class ColorCalculator {
   Point3D<float> normalMapColorToNormalVector(Color col);
   Color colorVectorToColor(Point3D<float> col);
   Point3D<float> fixColorVector(Point3D<float> v);
+
   float calculateCosineBetweenVectors(Point3D<float> v1,
                                       Point3D<float> v2);
   Point<float> calculateTexturePos(Point3D<float> p, Mesh *mesh);
+
+  Point3D<float> joinNormalVectors(Point3D<float> sphereNormalVect,
+                                   Point3D<float> normalMapVect);
+
   float fastExp(float base, int power);
  public:
   ColorCalculator();

@@ -72,9 +72,9 @@ struct AppConsts {
 
   const Point<int> textureExpectedSize = Point<int>(1008, 1008);
 
-  const float spiralMovePeriodTime = 1.0;
-  const float spiralMovePeriodDistance = 100;
-  const float spiralMoveRange = 800;
+  const float spiralMovePeriodTime = 3.0;
+  const float spiralMovePeriodDistance = 200;
+  const float spiralMoveRange = 1200;
   const std::string spiralSliderLabel = "Toggle light spiral move";
 
   const int minMeridianCount = 4;

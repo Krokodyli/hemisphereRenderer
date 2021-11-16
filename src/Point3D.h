@@ -19,6 +19,7 @@ struct Point3D {
   T dissq(const Point3D &r) const;
 
   float dot(const Point3D &r) const;
+  Point3D cross(const Point3D &r) const;
 };
 
 
@@ -72,4 +73,11 @@ T Point3D<T>::dissq(const Point3D &r) const {
 template <typename T>
 float Point3D<T>::dot(const Point3D<T> &r) const {
   return x*r.x + y * r.y + z * r.z;
+}
+
+template <typename T>
+Point3D<T> Point3D<T>::cross(const Point3D<T> &r) const {
+  return Point3D<T>(y*r.z - z*r.y,
+                    z*r.x - x*r.z,
+                    x*r.y - y*r.x);
 }
