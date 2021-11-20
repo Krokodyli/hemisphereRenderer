@@ -28,7 +28,6 @@ Color ColorCalculator::calculateExactColor(RenderConfig *renderConfig,
                                            Point3D<float> p) {
   float kd = renderConfig->kd;
   float ks = renderConfig->ks;
-  float k = renderConfig->k;
   int m = renderConfig->m;
 
   auto texturePos =
@@ -38,15 +37,7 @@ Color ColorCalculator::calculateExactColor(RenderConfig *renderConfig,
   auto IL = colorToColorVector(renderConfig->lightColor);
   auto L = calculateVersorTo(p, renderConfig->lightPosition);
 
-  auto normalColor = renderConfig->getNormalMapColor(texturePos);
-
-  auto N = calculateVersorTo(renderConfig->mesh->getCenter(), p);
-  if(normalColor.r > 0 || normalColor.b > 0 ||
-     normalColor.g > 0) {
-    auto normalMapVect = normalMapColorToNormalVector(normalColor);
-    normalMapVect = joinNormalVectors(N, normalMapVect);
-    N = (N * k + normalMapVect * (1-k));
-  }
+  auto N = calculateNormalVectorWithTexture(renderConfig, p, texturePos);
 
   auto cosNL = calculateCosineBetweenVectors(L, N);
 
@@ -74,6 +65,25 @@ Color ColorCalculator::calculateApproxColor(RenderConfig *renderConfig,
   return colorVectorToColor(color);
 }
 
+Point3D<float>
+ColorCalculator::calculateNormalVectorWithTexture(RenderConfig *renderConfig,
+                                                  Point3D<float> p,
+                                                  Point<float> texturePos) {
+  float k = renderConfig->k;
+  auto N = calculateVersorTo(renderConfig->mesh->getCenter(), p);
+
+  auto normalColor = renderConfig->getNormalMapColor(texturePos);
+
+  if(normalColor.r > 0 || normalColor.b > 0 ||
+     normalColor.g > 0) {
+    auto normalMapVect = normalMapColorToNormalVector(normalColor);
+    normalMapVect = joinNormalVectors(N, normalMapVect);
+    N = (N * k + normalMapVect * (1-k));
+  }
+
+  return N;
+}
+
 Point3D<float> ColorCalculator::calculateVersorTo(Point3D<float> from,
                                                   Point3D<float> to) {
   auto v = (to - from);
@@ -87,7 +97,7 @@ Point3D<float> ColorCalculator::colorToColorVector(Color col) {
 }
 
 Point3D<float> ColorCalculator::normalMapColorToNormalVector(Color col) {
-  float x = ((float)col.r/255.0) * 2.0 - 1.0;
+  float x = ((float)col.r / 255.0) * 2.0 - 1.0;
   float y = ((float)col.g / 255.0) * 2.0 - 1.0;
   float z = ((float)col.b / 255.0);
   return Point3D<float>(x, y, z);
@@ -98,20 +108,14 @@ Color ColorCalculator::colorVectorToColor(Point3D<float> col) {
 }
 
 Point3D<float> ColorCalculator::fixColorVector(Point3D<float> v) {
-  if(v.x < 0)
-    v.x = 0;
-  else if(v.x > 1)
-    v.x = 1;
+  v.x = std::max(v.x, 0.0f);
+  v.x = std::min(v.x, 1.0f);
 
-  if (v.y < 0)
-    v.y = 0;
-  else if (v.y > 1)
-    v.y = 1;
+  v.y = std::max(v.y, 0.0f);
+  v.y = std::min(v.y, 1.0f);
 
-  if (v.z < 0)
-    v.z = 0;
-  else if (v.z > 1)
-    v.z = 1;
+  v.z = std::max(v.z, 0.0f);
+  v.z = std::min(v.z, 1.0f);
 
   return v;
 }
@@ -140,7 +144,7 @@ Point<float> ColorCalculator::calculateTexturePos(Point3D<float> p,
   auto vector = p2 * dis;
 
   return Point<float>(vector.x + radius * 3.15f / 2,
-                      vector.y + radius * 3.15 / 2);
+                      vector.y + radius * 3.15f / 2);
 }
 
 Point3D<float>

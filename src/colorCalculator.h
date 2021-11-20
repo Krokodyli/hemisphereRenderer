@@ -3,6 +3,7 @@
 #include "Point3D.h"
 #include "color.h"
 #include "mesh.h"
+#include "algorithm"
 #include "renderConfig.h"
 #include <math.h>
 
@@ -13,6 +14,10 @@ class ColorCalculator {
 
   Color calculateExactColor(RenderConfig *renderConfig, Point3D<float> p);
   Color calculateApproxColor(RenderConfig *renderConfig, Point3D<float> p);
+
+  Point3D<float> calculateNormalVectorWithTexture(RenderConfig *renderConfig,
+                                                  Point3D<float> p,
+                                                  Point<float> texturePos);
 
   Point3D<float> calculateVersorTo(Point3D<float> from,
                                    Point3D<float> to);

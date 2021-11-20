@@ -10,19 +10,12 @@ void Checkbox::draw(DrawManager *drawManager) {
   drawManager->drawRectangle(pos, Point<float>(theme->size, theme->size),
                              theme->boxColor);
 
-  if(isActivated) {
-    Point<float> v1 = pos, v2 = pos;
-    v2.x += theme->size;
-    v2.y += theme->size;
-    drawManager->drawLine(v1, v2, theme->crossColor);
-    v1.y += theme->size;
-    v2.y -= theme->size;
-    drawManager->drawLine(v1, v2, theme->crossColor);
-  }
+  if(isActivated)
+    drawCross(drawManager);
 
   if (label != "") {
     auto labelPos = pos + theme->labelOffset;
-    drawManager->drawText(labelPos, label, 12, theme->fontColor);
+    drawManager->drawText(labelPos, label, theme->fontSize, theme->fontColor);
   }
 }
 
@@ -44,4 +37,14 @@ bool Checkbox::isCheckboxClicked(Controller *controller) {
   return controller->isLeftClicked()
     && controller->getMousePos().insideRec(pos.x, pos.y, theme->size,
                                            theme->size);
+}
+
+void Checkbox::drawCross(DrawManager *drawManager) {
+  Point<float> v1 = pos, v2 = pos;
+  v2.x += theme->size;
+  v2.y += theme->size;
+  drawManager->drawLine(v1, v2, theme->crossColor);
+  v1.y += theme->size;
+  v2.y -= theme->size;
+  drawManager->drawLine(v1, v2, theme->crossColor);
 }

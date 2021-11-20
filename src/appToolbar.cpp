@@ -64,7 +64,7 @@ void AppToolbar::setUpControls() {
              appConsts->maxK, SliderType::FloatPointSlider, appConsts->kLabel);
   pos.y += bigGap;
   makeSelectbox(&textureSelectBox, pos, appConsts->textureSelectboxLabel);
-  pos.y += smallGap;
+  pos.y += bigGap;
   makeSelectbox(&normalMapSelectBox, pos, appConsts->normalMapSelectboxLabel);
   pos.y += bigGap;
   makeCheckbox(&approxColoringModeCheckbox, pos, false,

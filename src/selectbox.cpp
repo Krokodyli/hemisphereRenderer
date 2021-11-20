@@ -42,6 +42,9 @@ void Selectbox::setElements(std::vector<std::string> newElements) {
 void Selectbox::draw(DrawManager *drawManager) {
   previous.draw(drawManager);
 
+  drawManager->drawText(pos + theme->labelOffset, label, theme->fontSize,
+                        theme->fontColor);
+
   if(currElement >= 0 && currElement < (int)elements.size()) {
     Point<float> textPos = pos;
     textPos.x += theme->buttonSize.x + theme->buttonGap;

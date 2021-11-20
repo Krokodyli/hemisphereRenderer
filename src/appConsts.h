@@ -36,6 +36,7 @@ public:
 class SelectboxTheme {
  public:
   const Color fontColor = Color(255, 255, 255);
+  const Point<float> labelOffset = Point<float>(0, -20);
   const int fontSize = 12;
   const Point<float> buttonSize = Point<float>(15, 15);
   const float buttonGap = 10;
@@ -46,7 +47,7 @@ class SelectboxTheme {
 
 struct AppConsts {
   const Point<int> windowSize = Point<int>(1200, 900);
-  const std::string appTitle = "Triangular mesh hole filling";
+  const std::string appTitle = "Hemisphere renderer";
 
   const Point<int> toolbarPos = Point<int>(0, 0);
   const Point<int> toolbarSize = Point<int>(300, 900);

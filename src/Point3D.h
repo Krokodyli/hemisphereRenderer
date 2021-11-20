@@ -41,8 +41,9 @@ Point3D<T> Point3D<T>::operator*(const T &r) const {
   return Point3D(x * r, y * r, z * r);
 }
 
-template <typename T> Point3D<T> Point3D<T>::operator*(const Point3D<T> &r) const {
-  return Point3D(x * r.x, y * r.z, z * r.z);
+template <typename T>
+Point3D<T> Point3D<T>::operator*(const Point3D<T> &r) const {
+  return Point3D(x * r.x, y * r.y, z * r.z);
 }
 
 template <typename T>

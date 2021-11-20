@@ -31,7 +31,7 @@ void ResourceManager::generateResourcesPath() {
   std::filesystem::path p = execPath;
   rootPath /= p.parent_path();
   rootPath = std::filesystem::weakly_canonical(rootPath);
-  resourcesPath = rootPath.string() + "/" + resourcesDir;
+  resourcesPath = rootPath / resourcesDir;
 }
 
 void ResourceManager::loadFont() { }
@@ -42,8 +42,6 @@ ResourceManager::loadAllImagesWithSize(std::string dir,
 
   std::unordered_map<std::string, Bitmap*> dict;
 
-  std::cout << "loading files for dir: " << dir << "\n";
-
   const std::filesystem::path dirPath(dir);
   if(!std::filesystem::exists(dirPath))
     return dict;
@@ -52,14 +50,10 @@ ResourceManager::loadAllImagesWithSize(std::string dir,
     if(!dirEntry.is_regular_file())
       continue;
 
-    std::cout << "Found " << dirEntry.path().string() << "\n";
-
     auto bitmapPath = std::filesystem::absolute(dirEntry.path());
     Bitmap *bitmap = loadBitmap(bitmapPath, expectedSize);
-    if(bitmap != nullptr) {
-      std::cout << "Added " << dirEntry.path().string() << "\n";
+    if(bitmap != nullptr)
       dict[bitmapPath.filename()] = bitmap;
-    }
   }
 
   return dict;

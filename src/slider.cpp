@@ -35,8 +35,10 @@ void Slider::draw(DrawManager *drawManager) {
   drawManager->drawRectangle(pos, Point<float>(sliderTheme->barSize.x,
                                                sliderTheme->barSize.y),
                              sliderTheme->barColor);
+
   drawManager->drawRectangle(indicatorPos, sliderTheme->indicatorSize,
                              sliderTheme->indicatorColor);
+
   drawManager->drawText(pos + sliderTheme->labelOffset, label,
                         sliderTheme->fontSize, sliderTheme->fontColor);
 }

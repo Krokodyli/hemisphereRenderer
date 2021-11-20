@@ -1,5 +1,6 @@
 #pragma once
 
+#include "drawManager.h"
 #include "toolbarControl.h"
 #include "appConsts.h"
 #include <functional>
@@ -16,6 +17,8 @@ class Checkbox : public ToolbarControl {
   std::function<void(bool)> eventHandler;
 
   bool isCheckboxClicked(Controller *controller);
+
+  void drawCross(DrawManager *drawManager);
 
  public:
   Checkbox(Point<float> pos, bool initialState, std::string label,
